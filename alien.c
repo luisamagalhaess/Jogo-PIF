@@ -30,3 +30,22 @@ Alien *criar_alien(int tipo, int linha){
         }
     return a;
 }
+
+void remover_alien(Alien **head, Alien *alien){
+    Alien *atual = *head;
+    Alien *anterior = NULL;
+    while (atual != NULL){
+        if(atual == alien){
+            if(anterior == NULL){ //se o alien que irá ser removido for o head, o head vira o próximo nó
+                *head = atual->next; 
+            }else{
+                anterior->next = atual->next; // o alien atual vai receber o next
+            }
+            free(atual);
+            return;
+        }else{
+            anterior = atual;
+            atual = atual->next;
+        }
+    }
+}

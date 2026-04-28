@@ -49,3 +49,11 @@ void remover_alien(Alien **head, Alien *alien){
         }
     }
 }
+
+void destruir_lista(Alien **head){
+    while(*head != NULL){
+        Alien *temp = (*head)->next;
+        free(*head);
+        *head = temp;
+    }
+}

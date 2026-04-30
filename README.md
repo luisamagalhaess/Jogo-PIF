@@ -1,106 +1,94 @@
-## 🪐 Sobre o Jogo
+## Sobre o Jogo
 
-### 🎮 Nome
+### Nome
 *(a definir)*
 
----
+### Integrantes do grupo
+- Luísa Feitosa Magalhães
+- Laura Vitória da Silva Alves
+- Pedro José Oliveira e Silva
 
-### 👨‍💻 Integrantes do grupo
-- Luísa Feitosa Magalhães  
-- Laura Vitória da Silva Alves  
-- Pedro José Oliveira e Silva  
-
----
-
-### 🌌 Ambientação
-O jogo se passa no planeta **Erid**, um mundo altamente tecnológico que está sendo invadido por forças alienígenas.
+### Ambientação
+O jogo se passa no planeta **Erid**, um mundo altamente tecnológico que está sendo invadido por forças alienígenas. O jogador assume o papel de defensor do planeta, posicionando estruturas estratégicas para impedir que os invasores alcancem a base.
 
 ---
 
-### 👾 Situação atual
-Quatro tipos diferentes de aliens estão atacando o planeta, tentando atravessar as defesas e invadir a base principal.
+## Sistema de Batalha
+
+### Campo de batalha
+- Grid **5 linhas × 9 colunas**
+- Os aliens surgem na **coluna 8** (direita) e avançam para a **coluna 0** (esquerda)
+- O jogador posiciona defesas nas colunas da esquerda para criar linhas de resistência
+- Se um alien atingir a coluna 0, o planeta perde uma vida
+
+### Recursos do jogador
+| Recurso | Valor inicial | Descrição |
+|---|---|---|
+| Energia | 50 | Usada para construir defesas |
+| Vidas | 5 | Resistência da base; zera = derrota |
+| Score | 0 | Aumenta ao eliminar aliens |
+| Onda | 1 | Dificuldade cresce a cada onda |
 
 ---
 
-## ⚔️ Sistema de Batalha
+## Defesas
 
-### 📍 Campo de batalha
-- A batalha acontece em um grid **5x9**
-- Representa uma área estratégica do planeta
-- Os aliens avançam da **direita para a esquerda**
-- O jogador defende o lado esquerdo (base)
-
----
-
-### 🛡️ Defesas do jogador
-- **Gerador**
-  - Produz energia ao longo do tempo
-  - Permite construir outras defesas
-  - Também funciona como bloqueio
-
-- **Torreta**
-  - Principal fonte de dano
-  - Ataca automaticamente os aliens à frente
-
-- **Muro**
-  - Alta resistência
-  - Usado para atrasar os inimigos
-
-- **Bomba**
-  - Causa dano em área ao explodir
-  - Uso estratégico
+| Defesa | Vida | Custo | Dano | Cadência | Especial |
+|---|---|---|---|---|---|
+| Gerador | 100 | 10 | — | — | +25 energia/turno |
+| Torreta | 100 | 100 | 10 | a cada 2 turnos | Ataca o alien mais próximo à frente |
+| Muro | 300 | 10 | — | — | Bloqueia e absorve dano |
+| Bomba | 1 | 100 | 200 | — | Explode em área (raio 1) ao ser atingida |
 
 ---
 
-### 👾 Comportamento dos aliens
-- Movem-se da direita para a esquerda
-- Atacam ao encontrar uma defesa
-- Se chegarem à coluna 0, causam dano ao planeta
+## Aliens
+
+| Tipo | Vida | Velocidade | Dano | Característica |
+|---|---|---|---|---|
+| Invasor | 10 | 1 col/turno | 10 | Padrão |
+| Blindado | 100 | 1 col/turno | 20 | Alta resistência |
+| Kamikaze | 10 | 2 col/turno | 100 | Rápido e altamente destrutivo |
 
 ---
 
-### 🔬 Tipos de aliens
-- **Básico** → vida média, movimento normal  
-- **Rápido** → pouca vida, alta velocidade  
-- **Tanque** → muita vida, movimento lento  
-- **Explosivo** → causa dano em área ao morrer  
+## Loop do Jogo
+1. O jogador posiciona ou mantém defesas (gasta energia)
+2. Geradores produzem energia
+3. Torretas atacam os aliens à sua frente
+4. Aliens avançam (de acordo com sua velocidade)
+5. Aliens que encontram uma defesa a atacam
+6. Aliens que chegam à coluna 0 causam dano ao planeta
 
 ---
 
-## 🔄 Loop do jogo
-1. O jogador realiza uma ação  
-2. Geradores produzem energia  
-3. Torres atacam  
-4. Aliens avançam  
-5. Ocorrem interações e combate  
+## Condições de Fim de Jogo
+
+**Vitória** — sobreviver a todas as ondas de invasão
+
+**Derrota** — o planeta perder todas as 5 vidas
 
 ---
 
-## 🎯 Objetivos
+## Estrutura do Código
 
-### 🏆 Vitória
-- Sobreviver a todas as ondas  
-**ou**
-- Atingir uma pontuação alvo  
+```
+tipos.h     — constantes e macros globais (dimensões, tipos de alien/defesa)
+alien.h/c   — estrutura Alien, criação, remoção e destruição da lista encadeada
+defesa.h/c  — estrutura Defesa, criação e liberação de memória
+jogo.h/c    — estado global (grid, aliens por linha, energia, vidas, score, cursor)
+```
 
-### 💀 Derrota
-- Aliens alcançam o final do grid (base)
-
----
-
-## 📊 Recursos do jogador
-- **Energia** → usada para construir defesas  
-- **Vida do planeta** → resistência da base  
-- **Score** → baseado em desempenho  
-
----
-
-## 🌊 Sistema de ondas aliens
-- Inimigos aparecem em grupos
-- Cada onda aumenta a dificuldade
-- Pode variar quantidade, velocidade e tipos  
-
----
-
-## 🎯 Resumo
-Um jogo de estratégia em grid onde o jogador posiciona defesas para impedir que ondas de aliens invadam o planeta.
+### Estado atual de implementação
+- [x] Estruturas de dados (Alien, Defesa, Celula, Jogo)
+- [x] Criação de aliens com atributos por tipo
+- [x] Lista encadeada de aliens por linha com inserção e remoção
+- [x] Criação de defesas com atributos por tipo
+- [x] Inicialização e destruição segura do estado do jogo
+- [ ] Loop principal de turnos
+- [ ] Movimentação dos aliens
+- [ ] Combate (torreta × alien, alien × defesa)
+- [ ] Spawn de ondas
+- [ ] Explosão em área da bomba
+- [ ] Renderização do grid no terminal
+- [ ] Input do jogador (posicionamento com cursor)

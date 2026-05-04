@@ -25,3 +25,20 @@ void carregar_scores(Score scores[], int* scores_salvos) {
     fclose(arquivo);
     
 }
+
+void exibir_scores(Score scores[], int scores_salvos){
+
+    for (int i = 0; i < scores_salvos - 1; i++) {
+        for (int j = 0; j < scores_salvos - i - 1; j++) {
+            if (scores[j].vidas < scores[j+1].vidas) {
+                Score temp = scores[j];      
+                scores[j] = scores[j+1];    
+                scores[j+1] = temp;          
+            }
+        }
+    }
+    
+    for (int i = 0; i < scores_salvos; i++) {
+        printf("%dº - %s - %d vidas\n", i+1, scores[i].nome, scores[i].vidas);
+    }
+}

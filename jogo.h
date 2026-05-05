@@ -22,5 +22,9 @@ typedef struct {
 
 void iniciar_jogo(Jogo* j);
 void destruir_jogo(Jogo* j);
+void mover_aliens(Jogo *j);
+void torretas_atacam(Jogo *j);
+void geradores_produzem(Jogo *j);
+void spawnar_alien(Jogo *j);
 
 #endif

@@ -15,5 +15,11 @@
 #define ALIEN_INVASOR   0
 #define ALIEN_BLINDADO  1
 #define ALIEN_KAMIKAZE  2
+
+#ifdef _WIN32
+    #define LIMPAR system("cls")
+#else
+    #define LIMPAR system("clear")
+#endif
  
 #endif

@@ -33,3 +33,14 @@ char obter_simbolo(Jogo *j, int linha, int coluna){
     }
     return '.';
 }
+
+void renderizar(Jogo *j){
+    LIMPAR;
+    printf("Energia: %d | Vidas: %d | Score: %d | Onda: %d\n", j->energia, j->vidas, j->score, j->onda_atual);
+    for(int l = 0; l < LINHAS; l++){
+        for(int c = 0; c < COLUNAS; c++){
+            printf("%c ", obter_simbolo(j, l, c));
+        }
+        printf("\n");
+    }
+}

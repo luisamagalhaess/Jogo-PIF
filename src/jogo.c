@@ -16,8 +16,8 @@ void iniciar_jogo(Jogo* j){
     j->vidas = 5;
     j->score = 0;
     j->onda_atual = 1;
-    j->cursor_linha = 0;
-    j->cursor_coluna = 0;
+    j->cursor_linha = -1;
+    j->cursor_coluna = -1;
 }
 
 void destruir_jogo(Jogo* j){ //liberar a memória alocada

@@ -16,24 +16,35 @@ int main() {
     iniciar_jogo(&j);
     carregar_scores(scores, &scores_salvos);
 
+    // Define a posição inicial do tabuleiro na tela
+    // Centraliza horizontalmente o grid de 9 colunas
     int x_inicial = (800 - 9 * 64) / 2;
-    int y_inicial = 100;
+    int y_inicial = 100; // Distância do topo da janela até o início do tabuleiro
 
     
     //loop
     while (!WindowShouldClose()) {
-        Vector2 mouse = GetMousePosition();
+
+        Vector2 mouse = GetMousePosition(); // Converte a posição do mouse em pixels para coluna e linha do tabuleiro
         int col_mouse = (mouse.x - x_inicial) / 64;
         int lin_mouse = (mouse.y - y_inicial) / 64;
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ //seleciona uma célula
+            j.cursor_linha = lin_mouse;
+            j.cursor_coluna = col_mouse;
+        }
+
         BeginDrawing();
             ClearBackground(BLACK);
             for (int l = 0; l < LINHAS; l++) {
                 for (int c = 0; c < COLUNAS; c++) {
                     Color cor = DARKGRAY;
-                    if (l == lin_mouse && c == col_mouse) {
-                            cor = GRAY;
-
-}
+                    if (l == lin_mouse && c == col_mouse) { //muda a cor ao passar o mouse
+                        cor = GRAY;
+                    }
+                    if (l == j.cursor_linha && c == j.cursor_coluna){ //muda a cor ao selecionar uma célula
+                        cor = YELLOW;
+                    }
 
                     DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, cor);
                     DrawRectangleLines(x_inicial + c * 64, y_inicial + l * 64, 64, 64, WHITE);

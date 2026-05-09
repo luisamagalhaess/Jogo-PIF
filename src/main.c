@@ -50,7 +50,24 @@ int main() {
                     DrawRectangleLines(x_inicial + c * 64, y_inicial + l * 64, 64, 64, WHITE);
                 }
             }
-        EndDrawing();
+            DrawRectangle(40, 440, 154, 100, DARKGRAY);
+            DrawText("Gerador", 40 + 10, 440 + 10, 20, WHITE);
+            DrawText("Custo: 10", 40 + 10, 440 + 35, 16, WHITE);
+
+            DrawRectangle(40 + 150 + 40, 440, 154, 100, DARKGRAY);
+            DrawText("Torreta", 40 + 150 + 40 + 10, 440 + 10, 16, WHITE);
+            DrawText("custo: 100", 40 + 150 + 40 + 10, 440 + 35, 16, WHITE);
+
+            DrawRectangle(230 + 150 + 40, 440, 154, 100, DARKGRAY);
+            DrawText("Muro", 230 + 150 + 40 + 10, 440 + 10, 20, WHITE);
+            DrawText("Custo: 10", 230 + 150 + 40 + 10, 440 + 35, 16, WHITE);
+
+            DrawRectangle(420 + 150 + 40, 440, 154, 100, DARKGRAY);
+            DrawText("Bomba", 420 + 150 + 40 + 10, 440 + 10, 20, WHITE);
+            DrawText("Custo: 100", 420 + 150 + 40 + 10, 440 + 35, 16, WHITE);
+
+
+            EndDrawing();
     }
     
     

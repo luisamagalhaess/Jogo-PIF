@@ -51,7 +51,7 @@ int main() {
                 }
             }
             DrawRectangle(40, 440, 154, 100, DARKGRAY);
-            DrawText("Gerador", 40 + 10, 440 + 10, 20, WHITE);
+            DrawText("Gerador", 40 + 10, 440 + 10, 20, WHITE); // (posição x + borda, posição y + borda, tamanho da fontr, cor)
             DrawText("Custo: 10", 40 + 10, 440 + 35, 16, WHITE);
 
             DrawRectangle(40 + 150 + 40, 440, 154, 100, DARKGRAY);

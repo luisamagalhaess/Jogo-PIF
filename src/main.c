@@ -20,7 +20,8 @@ int main() {
     // Centraliza horizontalmente o grid de 9 colunas
     int x_inicial = (800 - 9 * 64) / 2;
     int y_inicial = 100; // Distância do topo da janela até o início do tabuleiro
-
+    double ultimo_turno = GetTime();
+    double intervalo = 1.0; //1 segundo por turno
     
     //loop
     while (!WindowShouldClose()) {
@@ -33,6 +34,14 @@ int main() {
             j.cursor_linha = lin_mouse;
             j.cursor_coluna = col_mouse;
         }
+
+        if (GetTime() - ultimo_turno >= intervalo) {
+            geradores_produzem(&j);
+            torretas_atacam(&j);
+            mover_aliens(&j);
+            spawnar_alien(&j);
+            ultimo_turno = GetTime();
+    }
 
         BeginDrawing();
             ClearBackground(BLACK);

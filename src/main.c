@@ -21,8 +21,12 @@ int main() {
     int x_inicial = (800 - 9 * 64) / 2;
     int y_inicial = 100; // Distância do topo da janela até o início do tabuleiro
     double ultimo_turno = GetTime();
-    double intervalo = 1.0; //1 segundo por turno
-    
+    double intervalo = 3.0; //1 segundo por turno
+    Texture2D fundo = LoadTexture("assets/fundo.png");
+    Texture2D alien_invasor = LoadTexture("assets/alien_invasor.png");
+    Texture2D alien_blindado = LoadTexture("assets/alien_blindado.png");
+    Texture2D alien_kamikaze = LoadTexture("assets/alien_kamikaze.png");
+
     //loop
     while (!WindowShouldClose()) {
 
@@ -45,6 +49,15 @@ int main() {
 
         BeginDrawing();
             ClearBackground(BLACK);
+            DrawTexturePro(
+                fundo,
+                (Rectangle){0, 0, fundo.width, fundo.height}, // parte da imagem a usar
+                (Rectangle){0, 0, 800, 600},                   // onde desenhar na tela
+                (Vector2){0, 0},                               // origem
+                0,                                             // rotação
+                WHITE                                          // cor
+            );
+
             for (int l = 0; l < LINHAS; l++) {
                 for (int c = 0; c < COLUNAS; c++) {
                     Color cor = DARKGRAY;
@@ -57,8 +70,28 @@ int main() {
 
                     DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, cor);
                     DrawRectangleLines(x_inicial + c * 64, y_inicial + l * 64, 64, 64, WHITE);
+                    Alien *a = j.aliens[l];
+                    while (a != NULL) {
+                        if (a->coluna == c) {
+                            Texture2D tex;
+                            if (a->tipo == ALIEN_INVASOR) tex = alien_invasor;
+                            else if (a->tipo == ALIEN_BLINDADO) tex = alien_blindado;
+                            else tex = alien_kamikaze;
+
+                            DrawTexturePro(
+                                tex,
+                                (Rectangle){0, 0, tex.width, tex.height},
+                                (Rectangle){x_inicial + c * 64, y_inicial + l * 64, 64, 64},
+                                (Vector2){0, 0},
+                                0,
+                                RAYWHITE
+                            );
+                        }
+                        a = a->next;
+                    }
                 }
             }
+
             DrawRectangle(40, 440, 154, 100, DARKGRAY);
             DrawText("Gerador", 40 + 10, 440 + 10, 20, WHITE); // (posição x + borda, posição y + borda, tamanho da fontr, cor)
             DrawText("Custo: 10", 40 + 10, 440 + 35, 16, WHITE);

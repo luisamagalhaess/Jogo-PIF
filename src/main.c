@@ -19,7 +19,7 @@ int main() {
     // Define a posição inicial do tabuleiro na tela
     // Centraliza horizontalmente o grid de 9 colunas
     int x_inicial = (800 - 9 * 64) / 2;
-    int y_inicial = 100; // Distância do topo da janela até o início do tabuleiro
+    int y_inicial = 160; // Distância do topo da janela até o início do tabuleiro (Alterei de 100 -> 150 para enquadrar melhor o mapa com o fundo)
     double ultimo_turno = GetTime();
     double intervalo = 3.0; //1 segundo por turno
     Texture2D fundo = LoadTexture("assets/fundo.png");
@@ -105,21 +105,27 @@ int main() {
             }
 
             // 3. DESENHAR O MENU INFERIOR
-            DrawRectangle(40, 440, 154, 100, Fade(DARKGRAY, 0.8f)); // Fundo do menu um pouco transparente também
-            DrawText("Gerador", 40 + 10, 440 + 10, 20, WHITE); 
-            DrawText("Custo: 10", 40 + 10, 440 + 35, 16, WHITE);
+            int y_menu = 500; // Variável que controla a altura de todas as cartas
 
-            DrawRectangle(40 + 150 + 40, 440, 154, 100, Fade(DARKGRAY, 0.8f));
-            DrawText("Torreta", 40 + 150 + 40 + 10, 440 + 10, 16, WHITE);
-            DrawText("Custo: 100", 40 + 150 + 40 + 10, 440 + 35, 16, WHITE);
+            // CARTA 1: GERADOR
+            DrawRectangle(40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
+            DrawText("Gerador", 40 + 10, y_menu + 10, 20, WHITE); 
+            DrawText("Custo: 10", 40 + 10, y_menu + 35, 16, WHITE);
 
-            DrawRectangle(230 + 150 + 40, 440, 154, 100, Fade(DARKGRAY, 0.8f));
-            DrawText("Muro", 230 + 150 + 40 + 10, 440 + 10, 20, WHITE);
-            DrawText("Custo: 10", 230 + 150 + 40 + 10, 440 + 35, 16, WHITE);
+            // CARTA 2: TORRETA
+            DrawRectangle(40 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
+            DrawText("Torreta", 40 + 150 + 40 + 10, y_menu + 10, 16, WHITE);
+            DrawText("Custo: 100", 40 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
 
-            DrawRectangle(420 + 150 + 40, 440, 154, 100, Fade(DARKGRAY, 0.8f));
-            DrawText("Bomba", 420 + 150 + 40 + 10, 440 + 10, 20, WHITE);
-            DrawText("Custo: 100", 420 + 150 + 40 + 10, 440 + 35, 16, WHITE);
+            // CARTA 3: MURO (Como estava antes x Como ficou)
+            DrawRectangle(230 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
+            DrawText("Muro", 230 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
+            DrawText("Custo: 10", 230 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
+
+            // CARTA 4: BOMBA (Como estava antes x Como ficou)
+            DrawRectangle(420 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
+            DrawText("Bomba", 420 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
+            DrawText("Custo: 100", 420 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
 
         EndDrawing();
     }

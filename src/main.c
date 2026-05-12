@@ -30,86 +30,98 @@ int main() {
     //loop
     while (!WindowShouldClose()) {
 
-        Vector2 mouse = GetMousePosition(); // Converte a posição do mouse em pixels para coluna e linha do tabuleiro
+        Vector2 mouse = GetMousePosition();
         int col_mouse = (mouse.x - x_inicial) / 64;
         int lin_mouse = (mouse.y - y_inicial) / 64;
 
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ //seleciona uma célula
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
             j.cursor_linha = lin_mouse;
             j.cursor_coluna = col_mouse;
         }
 
+        // LÓGICA DO TURNO
         if (GetTime() - ultimo_turno >= intervalo) {
             geradores_produzem(&j);
             torretas_atacam(&j);
             mover_aliens(&j);
             spawnar_alien(&j);
             ultimo_turno = GetTime();
-    }
+        }
+
+        // CÁLCULO DA ANIMAÇÃO (Interpolação de 0.0 a 1.0)
+        float tempo_passado = GetTime() - ultimo_turno;
+        float progresso_turno = tempo_passado / intervalo;
+        if (progresso_turno > 1.0f) progresso_turno = 1.0f; // Trava em 1.0 por segurança
 
         BeginDrawing();
             ClearBackground(BLACK);
-            DrawTexturePro(
-                fundo,
-                (Rectangle){0, 0, fundo.width, fundo.height}, // parte da imagem a usar
-                (Rectangle){0, 0, 800, 600},                   // onde desenhar na tela
-                (Vector2){0, 0},                               // origem
-                0,                                             // rotação
-                WHITE                                          // cor
-            );
+            
+            // Fundo
+            DrawTexturePro(fundo, (Rectangle){0, 0, fundo.width, fundo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
 
+            // 1. DESENHAR O GRID (Agora transparente)
             for (int l = 0; l < LINHAS; l++) {
                 for (int c = 0; c < COLUNAS; c++) {
-                    Color cor = DARKGRAY;
-                    if (l == lin_mouse && c == col_mouse) { //muda a cor ao passar o mouse
-                        cor = GRAY;
+                    Color cor = BLANK; // Transparente por padrão!
+                    
+                    if (l == lin_mouse && c == col_mouse) { 
+                        cor = Fade(WHITE, 0.2f); // Branco transparente
                     }
-                    if (l == j.cursor_linha && c == j.cursor_coluna){ //muda a cor ao selecionar uma célula
-                        cor = YELLOW;
+                    if (l == j.cursor_linha && c == j.cursor_coluna){ 
+                        cor = Fade(YELLOW, 0.4f); // Amarelo transparente
                     }
 
-                    DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, cor);
-                    DrawRectangleLines(x_inicial + c * 64, y_inicial + l * 64, 64, 64, WHITE);
-                    Alien *a = j.aliens[l];
-                    while (a != NULL) {
-                        if (a->coluna == c) {
-                            Texture2D tex;
-                            if (a->tipo == ALIEN_INVASOR) tex = alien_invasor;
-                            else if (a->tipo == ALIEN_BLINDADO) tex = alien_blindado;
-                            else tex = alien_kamikaze;
-
-                            DrawTexturePro(
-                                tex,
-                                (Rectangle){0, 0, tex.width, tex.height},
-                                (Rectangle){x_inicial + c * 64, y_inicial + l * 64, 64, 64},
-                                (Vector2){0, 0},
-                                0,
-                                RAYWHITE
-                            );
-                        }
-                        a = a->next;
+                    if (cor.a > 0) { // Só desenha o fundo se tiver cor
+                        DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, cor);
                     }
+                    
+                    // Bordas do grid bem suaves para não atrapalhar a arte
+                    DrawRectangleLines(x_inicial + c * 64, y_inicial + l * 64, 64, 64, Fade(WHITE, 0.15f));
                 }
             }
 
-            DrawRectangle(40, 440, 154, 100, DARKGRAY);
-            DrawText("Gerador", 40 + 10, 440 + 10, 20, WHITE); // (posição x + borda, posição y + borda, tamanho da fontr, cor)
+            // 2. DESENHAR OS ALIENS (Com movimento fluido)
+            for (int l = 0; l < LINHAS; l++) {
+                Alien *a = j.aliens[l];
+                while (a != NULL) {
+                    Texture2D tex;
+                    if (a->tipo == ALIEN_INVASOR) tex = alien_invasor;
+                    else if (a->tipo == ALIEN_BLINDADO) tex = alien_blindado;
+                    else tex = alien_kamikaze;
+
+                    // O truque: A posição visual começa uma coluna para trás e vai deslizando até a coluna atual
+                    float coluna_visual = (a->coluna + 1) - progresso_turno;
+
+                    DrawTexturePro(
+                        tex,
+                        (Rectangle){0, 0, tex.width, tex.height},
+                        (Rectangle){x_inicial + coluna_visual * 64, y_inicial + l * 64, 64, 64},
+                        (Vector2){0, 0},
+                        0,
+                        RAYWHITE
+                    );
+                    a = a->next;
+                }
+            }
+
+            // 3. DESENHAR O MENU INFERIOR
+            DrawRectangle(40, 440, 154, 100, Fade(DARKGRAY, 0.8f)); // Fundo do menu um pouco transparente também
+            DrawText("Gerador", 40 + 10, 440 + 10, 20, WHITE); 
             DrawText("Custo: 10", 40 + 10, 440 + 35, 16, WHITE);
 
-            DrawRectangle(40 + 150 + 40, 440, 154, 100, DARKGRAY);
+            DrawRectangle(40 + 150 + 40, 440, 154, 100, Fade(DARKGRAY, 0.8f));
             DrawText("Torreta", 40 + 150 + 40 + 10, 440 + 10, 16, WHITE);
-            DrawText("custo: 100", 40 + 150 + 40 + 10, 440 + 35, 16, WHITE);
+            DrawText("Custo: 100", 40 + 150 + 40 + 10, 440 + 35, 16, WHITE);
 
-            DrawRectangle(230 + 150 + 40, 440, 154, 100, DARKGRAY);
+            DrawRectangle(230 + 150 + 40, 440, 154, 100, Fade(DARKGRAY, 0.8f));
             DrawText("Muro", 230 + 150 + 40 + 10, 440 + 10, 20, WHITE);
             DrawText("Custo: 10", 230 + 150 + 40 + 10, 440 + 35, 16, WHITE);
 
-            DrawRectangle(420 + 150 + 40, 440, 154, 100, DARKGRAY);
+            DrawRectangle(420 + 150 + 40, 440, 154, 100, Fade(DARKGRAY, 0.8f));
             DrawText("Bomba", 420 + 150 + 40 + 10, 440 + 10, 20, WHITE);
             DrawText("Custo: 100", 420 + 150 + 40 + 10, 440 + 35, 16, WHITE);
 
-
-            EndDrawing();
+        EndDrawing();
     }
     
     

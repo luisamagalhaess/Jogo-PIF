@@ -26,6 +26,10 @@ int main() {
     Texture2D alien_invasor = LoadTexture("assets/alien_invasor.png");
     Texture2D alien_blindado = LoadTexture("assets/alien_blindado.png");
     Texture2D alien_kamikaze = LoadTexture("assets/alien_kamikaze.png");
+    Texture2D gerador = LoadTexture("assets/gerador.png");
+    Texture2D muro = LoadTexture("assets/muro.png");
+    Texture2D torreta = LoadTexture("assets/torreta.png");
+    Texture2D bomba = LoadTexture("assets/bomba.png");
 
     //loop
     while (!WindowShouldClose()) {
@@ -104,6 +108,37 @@ int main() {
                 }
             }
 
+            //desenha defesa
+            for(int l = 0; l < LINHAS; l++){
+                for(int c = 0; c < COLUNAS; c++){
+                    if(j.grid[l][c].defesa != NULL){
+                        Texture2D tex;
+                        switch (j.grid[l][c].defesa->tipo){
+                            case DEFESA_GERADOR:
+                                tex = gerador;
+                                break;
+                            case DEFESA_BOMBA:
+                                tex = bomba;
+                                break;
+                            case DEFESA_MURO:
+                                tex = muro;
+                                break;
+                            case DEFESA_TORRETA:
+                                tex = torreta;
+                                break;
+                        }
+                        DrawTexturePro(
+                            tex,
+                            (Rectangle){0, 0, tex.width, tex.height},
+                            (Rectangle){x_inicial + c * 64, y_inicial + l * 64, 64, 64},
+                            (Vector2){0, 0},
+                            0,
+                            RAYWHITE
+                        );
+                    }
+                }
+            }
+
             // 3. DESENHAR O MENU INFERIOR
             int y_menu = 500; // Variável que controla a altura de todas as cartas
 
@@ -139,6 +174,14 @@ int main() {
     exibir_scores(scores, scores_salvos);
 
     // 6. Liberar memória
+    UnloadTexture(fundo);
+    UnloadTexture(alien_invasor);
+    UnloadTexture(alien_blindado);
+    UnloadTexture(alien_kamikaze);
+    UnloadTexture(gerador);
+    UnloadTexture(muro);
+    UnloadTexture(torreta);
+    UnloadTexture(bomba);
     CloseWindow();
     destruir_jogo(&j);
     return 0;

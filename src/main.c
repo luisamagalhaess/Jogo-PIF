@@ -200,6 +200,12 @@ int main() {
             DrawText("Bomba", 420 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
             DrawText("Custo: 100", 420 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
 
+            //exibir energia, vidas, score e ondas (x, y, tamanho, cor)
+            DrawText(TextFormat("Energia: %d", j.energia), 10, 15, 20, WHITE);
+            DrawText(TextFormat("Vidas: %d", j.vidas), 200, 15, 20, WHITE);
+            DrawText(TextFormat("Score: %d", j.score), 400, 15, 20, WHITE);
+            DrawText(TextFormat("Onda atual: %d", j.onda_atual), 600, 15, 20, WHITE);
+
         EndDrawing();
     }
     

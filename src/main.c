@@ -3,6 +3,7 @@
 #include "jogo.h"
 #include "scores.h"
 #include "raylib.h"
+#include <time.h>
 
 int main() {
     // 1. Declarar variáveis
@@ -14,6 +15,7 @@ int main() {
     // 2. Inicializar
     InitWindow(800, 600, "Erid");
     iniciar_jogo(&j);
+    srand(time(NULL));
     carregar_scores(scores, &scores_salvos);
 
     // Define a posição inicial do tabuleiro na tela

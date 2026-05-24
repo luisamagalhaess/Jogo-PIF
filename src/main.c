@@ -30,8 +30,9 @@ int main() {
     Texture2D muro = LoadTexture("assets/muro.png");
     Texture2D torreta = LoadTexture("assets/torreta.png");
     Texture2D bomba = LoadTexture("assets/bomba.png");
-
-    //loop
+    
+    int defesa_selecionada = -1;
+    int y_menu = 500; 
     while (!WindowShouldClose()) {
 
         Vector2 mouse = GetMousePosition();
@@ -39,8 +40,44 @@ int main() {
         int lin_mouse = (mouse.y - y_inicial) / 64;
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
-            j.cursor_linha = lin_mouse;
-            j.cursor_coluna = col_mouse;
+            //verificar se o clique aconteceu nas cartas:
+            if(mouse.y >= y_menu){
+                if(mouse.x >= 40 && mouse.x <= 40 + 154){
+                    defesa_selecionada = DEFESA_GERADOR;
+                }else if(mouse.x >= 230 && mouse.x <= 230 + 154){
+                    defesa_selecionada = DEFESA_TORRETA;
+                }else if(mouse.x >= 420 && mouse.x <= 420 + 154){
+                    defesa_selecionada = DEFESA_MURO;
+                }else if(mouse.x >= 610 && mouse.x <= 610 + 154){
+                    defesa_selecionada = DEFESA_BOMBA;
+                }
+            }else{
+                j.cursor_linha = lin_mouse;
+                j.cursor_coluna = col_mouse;
+                if (defesa_selecionada != -1){
+                    int custo = 0;
+                    if(defesa_selecionada == DEFESA_GERADOR){
+                        custo = 10;
+                    }else if(defesa_selecionada == DEFESA_TORRETA){
+                        custo = 100;
+                    }else if(defesa_selecionada == DEFESA_MURO){
+                        custo = 10;
+                    }else if(defesa_selecionada == DEFESA_BOMBA){
+                        custo = 100;
+                    }
+
+                    if(j.energia >= custo){
+                        //caso já tenha uma defesa no local selecionado
+                        if(j.grid[j.cursor_linha][j.cursor_coluna].defesa != NULL){
+                            destruir_defesa(j.grid[j.cursor_linha][j.cursor_coluna].defesa);
+                            j.grid[j.cursor_linha][j.cursor_coluna].defesa = NULL;
+                        }
+                        j.grid[j.cursor_linha][j.cursor_coluna].defesa = criar_defesa(defesa_selecionada);
+                        j.energia -= custo;
+                        defesa_selecionada = -1;
+                    }
+                }
+            }
         }
 
         // LÓGICA DO TURNO
@@ -140,7 +177,6 @@ int main() {
             }
 
             // 3. DESENHAR O MENU INFERIOR
-            int y_menu = 500; // Variável que controla a altura de todas as cartas
 
             // CARTA 1: GERADOR
             DrawRectangle(40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));

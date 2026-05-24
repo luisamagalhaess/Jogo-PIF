@@ -7,7 +7,6 @@ void iniciar_jogo(Jogo* j){
             j->grid[l][c].defesa = NULL;
         }
     }
-
     for(int l = 0; l < LINHAS; l++){
         j->aliens[l] = NULL;
     }

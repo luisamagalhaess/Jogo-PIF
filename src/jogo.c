@@ -52,6 +52,16 @@ void mover_aliens(Jogo *j) {
         while (a != NULL) {
             Alien *proximo = a->next;
             a->coluna--;
+            if(j->grid[l][a->coluna].defesa != NULL){
+                j->grid[l][a->coluna].defesa->vida -= a->dano;
+                if(j->grid[l][a->coluna].defesa->vida <= 0){
+                    destruir_defesa(j->grid[l][a->coluna].defesa);
+                    j->grid[l][a->coluna].defesa = NULL;
+                }
+                a->coluna++;
+                a = proximo;
+                continue;
+            }
             if (a->coluna < 0) {
                 j->vidas--;
                 remover_alien(&j->aliens[l], a);

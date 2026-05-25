@@ -85,10 +85,10 @@ jogo.h/c    — estado global (grid, aliens por linha, energia, vidas, score, cu
 - [x] Lista encadeada de aliens por linha com inserção e remoção
 - [x] Criação de defesas com atributos por tipo
 - [x] Inicialização e destruição segura do estado do jogo
-- [ ] Loop principal de turnos
-- [ ] Movimentação dos aliens
-- [ ] Combate (torreta × alien, alien × defesa)
+- [x] Loop principal de turnos
+- [x] Movimentação dos aliens
+- [x] Combate (torreta × alien, alien × defesa)
 - [ ] Spawn de ondas
 - [ ] Explosão em área da bomba
-- [ ] Renderização do grid no terminal
-- [ ] Input do jogador (posicionamento com cursor)
+- [x] Renderização do grid no terminal
+- [x] Input do jogador (posicionamento com cursor)

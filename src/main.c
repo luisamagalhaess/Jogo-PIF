@@ -37,177 +37,193 @@ int main() {
     int defesa_selecionada = -1;
     int y_menu = 500; 
     while (!WindowShouldClose()) {
+        if(j.vidas > 0){
+            Vector2 mouse = GetMousePosition();
+            int col_mouse = (mouse.x - x_inicial) / 64;
+            int lin_mouse = (mouse.y - y_inicial) / 64;
 
-        Vector2 mouse = GetMousePosition();
-        int col_mouse = (mouse.x - x_inicial) / 64;
-        int lin_mouse = (mouse.y - y_inicial) / 64;
-
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
-            //verificar se o clique aconteceu nas cartas:
-            if(mouse.y >= y_menu){
-                if(mouse.x >= 40 && mouse.x <= 40 + 154){
-                    defesa_selecionada = DEFESA_GERADOR;
-                }else if(mouse.x >= 230 && mouse.x <= 230 + 154){
-                    defesa_selecionada = DEFESA_TORRETA;
-                }else if(mouse.x >= 420 && mouse.x <= 420 + 154){
-                    defesa_selecionada = DEFESA_MURO;
-                }else if(mouse.x >= 610 && mouse.x <= 610 + 154){
-                    defesa_selecionada = DEFESA_BOMBA;
-                }
-            }else{
-                j.cursor_linha = lin_mouse;
-                j.cursor_coluna = col_mouse;
-                if (defesa_selecionada != -1){
-                    int custo = 0;
-                    if(defesa_selecionada == DEFESA_GERADOR){
-                        custo = 10;
-                    }else if(defesa_selecionada == DEFESA_TORRETA){
-                        custo = 100;
-                    }else if(defesa_selecionada == DEFESA_MURO){
-                        custo = 10;
-                    }else if(defesa_selecionada == DEFESA_BOMBA){
-                        custo = 100;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                //verificar se o clique aconteceu nas cartas:
+                if(mouse.y >= y_menu){
+                    if(mouse.x >= 40 && mouse.x <= 40 + 154){
+                        defesa_selecionada = DEFESA_GERADOR;
+                    }else if(mouse.x >= 230 && mouse.x <= 230 + 154){
+                        defesa_selecionada = DEFESA_TORRETA;
+                    }else if(mouse.x >= 420 && mouse.x <= 420 + 154){
+                        defesa_selecionada = DEFESA_MURO;
+                    }else if(mouse.x >= 610 && mouse.x <= 610 + 154){
+                        defesa_selecionada = DEFESA_BOMBA;
                     }
-
-                    if(j.energia >= custo){
-                        //caso já tenha uma defesa no local selecionado
-                        if(j.grid[j.cursor_linha][j.cursor_coluna].defesa != NULL){
-                            destruir_defesa(j.grid[j.cursor_linha][j.cursor_coluna].defesa);
-                            j.grid[j.cursor_linha][j.cursor_coluna].defesa = NULL;
+                }else{
+                    j.cursor_linha = lin_mouse;
+                    j.cursor_coluna = col_mouse;
+                    if (defesa_selecionada != -1){
+                        int custo = 0;
+                        if(defesa_selecionada == DEFESA_GERADOR){
+                            custo = 10;
+                        }else if(defesa_selecionada == DEFESA_TORRETA){
+                            custo = 100;
+                        }else if(defesa_selecionada == DEFESA_MURO){
+                            custo = 10;
+                        }else if(defesa_selecionada == DEFESA_BOMBA){
+                            custo = 100;
                         }
-                        j.grid[j.cursor_linha][j.cursor_coluna].defesa = criar_defesa(defesa_selecionada);
-                        j.energia -= custo;
-                        defesa_selecionada = -1;
+
+                        if(j.energia >= custo){
+                            //caso já tenha uma defesa no local selecionado
+                            if(j.grid[j.cursor_linha][j.cursor_coluna].defesa != NULL){
+                                destruir_defesa(j.grid[j.cursor_linha][j.cursor_coluna].defesa);
+                                j.grid[j.cursor_linha][j.cursor_coluna].defesa = NULL;
+                            }
+                            j.grid[j.cursor_linha][j.cursor_coluna].defesa = criar_defesa(defesa_selecionada);
+                            j.energia -= custo;
+                            defesa_selecionada = -1;
+                        }
                     }
                 }
             }
-        }
 
-        // LÓGICA DO TURNO
-        if (GetTime() - ultimo_turno >= intervalo) {
-            geradores_produzem(&j);
-            torretas_atacam(&j);
-            mover_aliens(&j);
-            spawnar_alien(&j);
-            ultimo_turno = GetTime();
-        }
-
-        // CÁLCULO DA ANIMAÇÃO (Interpolação de 0.0 a 1.0)
-        float tempo_passado = GetTime() - ultimo_turno;
-        float progresso_turno = tempo_passado / intervalo;
-        if (progresso_turno > 1.0f) progresso_turno = 1.0f; // Trava em 1.0 por segurança
-
-        BeginDrawing();
-            ClearBackground(BLACK);
-            
-            // Fundo
-            DrawTexturePro(fundo, (Rectangle){0, 0, fundo.width, fundo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
-
-            // 1. DESENHAR O GRID (Agora transparente)
-            for (int l = 0; l < LINHAS; l++) {
-                for (int c = 0; c < COLUNAS; c++) {
-                    Color cor = BLANK; // Transparente por padrão!
-                    
-                    if (l == lin_mouse && c == col_mouse) { 
-                        cor = Fade(WHITE, 0.2f); // Branco transparente
-                    }
-                    if (l == j.cursor_linha && c == j.cursor_coluna){ 
-                        cor = Fade(YELLOW, 0.4f); // Amarelo transparente
-                    }
-
-                    if (cor.a > 0) { // Só desenha o fundo se tiver cor
-                        DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, cor);
-                    }
-                    
-                    // Bordas do grid bem suaves para não atrapalhar a arte
-                    DrawRectangleLines(x_inicial + c * 64, y_inicial + l * 64, 64, 64, Fade(WHITE, 0.15f));
-                }
+            // LÓGICA DO TURNO
+            if (GetTime() - ultimo_turno >= intervalo) {
+                geradores_produzem(&j);
+                torretas_atacam(&j);
+                mover_aliens(&j);
+                spawnar_alien(&j);
+                ultimo_turno = GetTime();
             }
 
-            // 2. DESENHAR OS ALIENS (Com movimento fluido)
-            for (int l = 0; l < LINHAS; l++) {
-                Alien *a = j.aliens[l];
-                while (a != NULL) {
-                    Texture2D tex;
-                    if (a->tipo == ALIEN_INVASOR) tex = alien_invasor;
-                    else if (a->tipo == ALIEN_BLINDADO) tex = alien_blindado;
-                    else tex = alien_kamikaze;
+            // CÁLCULO DA ANIMAÇÃO (Interpolação de 0.0 a 1.0)
+            float tempo_passado = GetTime() - ultimo_turno;
+            float progresso_turno = tempo_passado / intervalo;
+            if (progresso_turno > 1.0f) progresso_turno = 1.0f; // Trava em 1.0 por segurança
 
-                    // O truque: A posição visual começa uma coluna para trás e vai deslizando até a coluna atual
-                    float coluna_visual = (a->coluna + 1) - progresso_turno;
+            BeginDrawing();
+                ClearBackground(BLACK);
+                
+                // Fundo
+                DrawTexturePro(fundo, (Rectangle){0, 0, fundo.width, fundo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
 
-                    DrawTexturePro(
-                        tex,
-                        (Rectangle){0, 0, tex.width, tex.height},
-                        (Rectangle){x_inicial + coluna_visual * 64, y_inicial + l * 64, 64, 64},
-                        (Vector2){0, 0},
-                        0,
-                        RAYWHITE
-                    );
-                    a = a->next;
+                // 1. DESENHAR O GRID (Agora transparente)
+                for (int l = 0; l < LINHAS; l++) {
+                    for (int c = 0; c < COLUNAS; c++) {
+                        Color cor = BLANK; // Transparente por padrão!
+                        
+                        if (l == lin_mouse && c == col_mouse) { 
+                            cor = Fade(WHITE, 0.2f); // Branco transparente
+                        }
+                        if (l == j.cursor_linha && c == j.cursor_coluna){ 
+                            cor = Fade(YELLOW, 0.4f); // Amarelo transparente
+                        }
+
+                        if (cor.a > 0) { // Só desenha o fundo se tiver cor
+                            DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, cor);
+                        }
+                        
+                        // Bordas do grid bem suaves para não atrapalhar a arte
+                        DrawRectangleLines(x_inicial + c * 64, y_inicial + l * 64, 64, 64, Fade(WHITE, 0.15f));
+                    }
                 }
-            }
 
-            //desenha defesa
-            for(int l = 0; l < LINHAS; l++){
-                for(int c = 0; c < COLUNAS; c++){
-                    if(j.grid[l][c].defesa != NULL){
+                // 2. DESENHAR OS ALIENS (Com movimento fluido)
+                for (int l = 0; l < LINHAS; l++) {
+                    Alien *a = j.aliens[l];
+                    while (a != NULL) {
                         Texture2D tex;
-                        switch (j.grid[l][c].defesa->tipo){
-                            case DEFESA_GERADOR:
-                                tex = gerador;
-                                break;
-                            case DEFESA_BOMBA:
-                                tex = bomba;
-                                break;
-                            case DEFESA_MURO:
-                                tex = muro;
-                                break;
-                            case DEFESA_TORRETA:
-                                tex = torreta;
-                                break;
-                        }
+                        if (a->tipo == ALIEN_INVASOR) tex = alien_invasor;
+                        else if (a->tipo == ALIEN_BLINDADO) tex = alien_blindado;
+                        else tex = alien_kamikaze;
+
+                        // O truque: A posição visual começa uma coluna para trás e vai deslizando até a coluna atual
+                        float coluna_visual = (a->coluna + 1) - progresso_turno;
+
                         DrawTexturePro(
                             tex,
                             (Rectangle){0, 0, tex.width, tex.height},
-                            (Rectangle){x_inicial + c * 64, y_inicial + l * 64, 64, 64},
+                            (Rectangle){x_inicial + coluna_visual * 64, y_inicial + l * 64, 64, 64},
                             (Vector2){0, 0},
                             0,
                             RAYWHITE
                         );
+                        a = a->next;
                     }
                 }
-            }
 
-            // 3. DESENHAR O MENU INFERIOR
+                //desenha defesa
+                for(int l = 0; l < LINHAS; l++){
+                    for(int c = 0; c < COLUNAS; c++){
+                        if(j.grid[l][c].defesa != NULL){
+                            Texture2D tex;
+                            switch (j.grid[l][c].defesa->tipo){
+                                case DEFESA_GERADOR:
+                                    tex = gerador;
+                                    break;
+                                case DEFESA_BOMBA:
+                                    tex = bomba;
+                                    break;
+                                case DEFESA_MURO:
+                                    tex = muro;
+                                    break;
+                                case DEFESA_TORRETA:
+                                    tex = torreta;
+                                    break;
+                            }
+                            DrawTexturePro(
+                                tex,
+                                (Rectangle){0, 0, tex.width, tex.height},
+                                (Rectangle){x_inicial + c * 64, y_inicial + l * 64, 64, 64},
+                                (Vector2){0, 0},
+                                0,
+                                RAYWHITE
+                            );
+                        }
+                    }
+                }
 
-            // CARTA 1: GERADOR
-            DrawRectangle(40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-            DrawText("Gerador", 40 + 10, y_menu + 10, 20, WHITE); 
-            DrawText("Custo: 10", 40 + 10, y_menu + 35, 16, WHITE);
+                // 3. DESENHAR O MENU INFERIOR
 
-            // CARTA 2: TORRETA
-            DrawRectangle(40 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-            DrawText("Torreta", 40 + 150 + 40 + 10, y_menu + 10, 16, WHITE);
-            DrawText("Custo: 100", 40 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
+                // CARTA 1: GERADOR
+                DrawRectangle(40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
+                DrawText("Gerador", 40 + 10, y_menu + 10, 20, WHITE); 
+                DrawText("Custo: 10", 40 + 10, y_menu + 35, 16, WHITE);
 
-            // CARTA 3: MURO (Como estava antes x Como ficou)
-            DrawRectangle(230 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-            DrawText("Muro", 230 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
-            DrawText("Custo: 10", 230 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
+                // CARTA 2: TORRETA
+                DrawRectangle(40 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
+                DrawText("Torreta", 40 + 150 + 40 + 10, y_menu + 10, 16, WHITE);
+                DrawText("Custo: 100", 40 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
 
-            // CARTA 4: BOMBA (Como estava antes x Como ficou)
-            DrawRectangle(420 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-            DrawText("Bomba", 420 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
-            DrawText("Custo: 100", 420 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
+                // CARTA 3: MURO (Como estava antes x Como ficou)
+                DrawRectangle(230 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
+                DrawText("Muro", 230 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
+                DrawText("Custo: 10", 230 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
 
-            //exibir energia, vidas, score e ondas (x, y, tamanho, cor)
-            DrawText(TextFormat("Energia: %d", j.energia), 10, 15, 20, WHITE);
-            DrawText(TextFormat("Vidas: %d", j.vidas), 200, 15, 20, WHITE);
-            DrawText(TextFormat("Score: %d", j.score), 400, 15, 20, WHITE);
-            DrawText(TextFormat("Onda atual: %d", j.onda_atual), 600, 15, 20, WHITE);
+                // CARTA 4: BOMBA (Como estava antes x Como ficou)
+                DrawRectangle(420 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
+                DrawText("Bomba", 420 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
+                DrawText("Custo: 100", 420 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
 
-        EndDrawing();
+                //exibir energia, vidas, score e ondas (x, y, tamanho, cor)
+                DrawText(TextFormat("Energia: %d", j.energia), 10, 15, 20, WHITE);
+                DrawText(TextFormat("Vidas: %d", j.vidas), 200, 15, 20, WHITE);
+                DrawText(TextFormat("Score: %d", j.score), 400, 15, 20, WHITE);
+                DrawText(TextFormat("Onda atual: %d", j.onda_atual), 600, 15, 20, WHITE);
+
+            EndDrawing();
+        }else{
+            BeginDrawing();
+                ClearBackground(BLACK);
+                DrawTexturePro(fundo, (Rectangle){0, 0, fundo.width, fundo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
+                DrawText("GAME OVER", 250, 200, 60, WHITE);
+                DrawText(TextFormat("Score: %d", j.score), 300, 290, 30, WHITE);
+                DrawText("Clique para jogar novamente", 230, 370, 20, WHITE);
+                
+                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                    destruir_jogo(&j);
+                    iniciar_jogo(&j);
+                    ultimo_turno = GetTime();
+                    defesa_selecionada = -1;
+                }
+            EndDrawing();
+        }
     }
     
     

@@ -55,6 +55,9 @@ void mover_aliens(Jogo *j) {
             if(j->grid[l][a->coluna].defesa != NULL){
                 j->grid[l][a->coluna].defesa->vida -= a->dano;
                 if(j->grid[l][a->coluna].defesa->vida <= 0){
+                    if(j->grid[l][a->coluna].defesa->tipo == DEFESA_BOMBA){ //verifica se a defesa é uma bomba
+                       explodir_bomba(j, l, a->coluna); //explode
+                    }
                     destruir_defesa(j->grid[l][a->coluna].defesa);
                     j->grid[l][a->coluna].defesa = NULL;
                 }
@@ -112,4 +115,23 @@ void torretas_atacam(Jogo *j){
         }
     }
 
+}
+
+void explodir_bomba(Jogo *j, int linha, int coluna){
+    for (int l = linha -1; l <= linha +1;  l++){ // começa com -1 para pegar a linha de cima, passa pela linha da bomba e termina na linha de baixo(+1)
+        for (int c = coluna - 1; c <= coluna + 1; c++){
+            if (l >= 0 && l<LINHAS && c >= 0 && c < COLUNAS){//verifica se está dentro do grid, evita l e c serem negativos
+                Alien *a = j->aliens[l];
+                while (a != NULL){
+                    Alien *proximo = a->next;
+                    if (a->coluna == c){
+                        j->score += 10;
+                        remover_alien(&j->aliens[l], a);
+                    }
+                    a = proximo;
+                }
+            }
+
+        }
+    }
 }

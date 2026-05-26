@@ -125,10 +125,20 @@ void explodir_bomba(Jogo *j, int linha, int coluna){
                 while (a != NULL){
                     Alien *proximo = a->next;
                     if (a->coluna == c){
-                        j->score += 10;
-                        remover_alien(&j->aliens[l], a);
+                        a->vida -= 200;
+                        if(a->vida <= 0){
+                            remover_alien(&j->aliens[l], a);
+                            j->score += 10;
+                        }
                     }
                     a = proximo;
+                }
+                if(j->grid[l][c].defesa != NULL){
+                    j->grid[l][c].defesa->vida -= 200;
+                    if(j->grid[l][c].defesa->vida <= 0){
+                        destruir_defesa(j->grid[l][c].defesa);
+                        j->grid[l][c].defesa = NULL;
+                    }
                 }
             }
 

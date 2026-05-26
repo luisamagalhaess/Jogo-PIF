@@ -26,14 +26,15 @@ int main() {
     double ultimo_turno = GetTime();
     double intervalo = 3.0; //1 segundo por turno
     Texture2D fundo = LoadTexture("assets/fundo.png");
-    Texture2D alien_invasor = LoadTexture("assets/alien_invasor.png");
     Texture2D alien_blindado = LoadTexture("assets/alien_blindado.png");
     Texture2D alien_kamikaze = LoadTexture("assets/alien_kamikaze.png");
     Texture2D gerador = LoadTexture("assets/gerador.png");
     Texture2D muro = LoadTexture("assets/muro.png");
     Texture2D torreta = LoadTexture("assets/torreta.png");
     Texture2D bomba = LoadTexture("assets/bomba.png");
-    
+    Texture2D alien_invasor = LoadTexture("assets/alien_invasor.png");
+
+
     int defesa_selecionada = -1;
     int y_menu = 500; 
     while (!WindowShouldClose()) {
@@ -133,12 +134,13 @@ int main() {
                         else if (a->tipo == ALIEN_BLINDADO) tex = alien_blindado;
                         else tex = alien_kamikaze;
 
-                        // O truque: A posição visual começa uma coluna para trás e vai deslizando até a coluna atual
                         float coluna_visual = (a->coluna + 1) - progresso_turno;
+                        int frame_largura = tex.width / 4;
+                        int frame_atual = (int)(GetTime() * 6) % 4;
 
                         DrawTexturePro(
                             tex,
-                            (Rectangle){0, 0, tex.width, tex.height},
+                            (Rectangle){frame_atual * frame_largura, 0, frame_largura, tex.height},
                             (Rectangle){x_inicial + coluna_visual * 64, y_inicial + l * 64, 64, 64},
                             (Vector2){0, 0},
                             0,

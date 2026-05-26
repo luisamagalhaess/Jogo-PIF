@@ -33,7 +33,7 @@ int main() {
     int defesa_selecionada = -1;
     int y_menu = 500;
     int estado = 0; // 0=história, 1=título, 2=jogo, 3=game over
-    double tempo_historia = GetTime();
+
 
     while (!WindowShouldClose()) {
 

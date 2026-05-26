@@ -83,6 +83,7 @@ int main() {
     int defesa_selecionada = -1;
     int y_menu = 500;
     int estado = 0; // 0=história, 1=título, 2=jogo, 3=game over
+    Projetil projeteis[MAX_PROJETEIS] = {0};
 
 
     while (!WindowShouldClose()) {
@@ -170,7 +171,7 @@ int main() {
 
             if (GetTime() - ultimo_turno >= intervalo) {
                 geradores_produzem(&j);
-                torretas_atacam(&j);
+                spawnar_projeteis(&j, projeteis, x_inicial, y_inicial);
                 mover_aliens(&j);
                 spawnar_alien(&j);
                 verificar_onda(&j);
@@ -268,6 +269,9 @@ int main() {
                 if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
                     destruir_jogo(&j);
                     iniciar_jogo(&j);
+                    for (int i = 0; i < MAX_PROJETEIS; i++) {
+                        projeteis[i].ativo = 0;
+                    }
                     ultimo_turno = GetTime();
                     defesa_selecionada = -1;
                     estado = 0;

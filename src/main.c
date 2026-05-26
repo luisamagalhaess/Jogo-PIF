@@ -5,6 +5,56 @@
 #include "raylib.h"
 #include <time.h>
 #include <stdlib.h>
+#include <math.h> 
+
+#define MAX_PROJETEIS 50
+
+typedef struct {
+    float x_origem, y_origem;
+    float x_destino, y_destino;
+    double tempo_inicio;
+    float duracao;
+    int dano;
+    int linha;
+    int ativo;
+} Projetil;
+
+void spawnar_projeteis(Jogo *j, Projetil projeteis[], int x_inicial, int y_inicial) {
+    for (int l = 0; l < LINHAS; l++) {
+        for (int c = 0; c < COLUNAS; c++) {
+            if (j->grid[l][c].defesa == NULL) continue;
+            if (j->grid[l][c].defesa->tipo != DEFESA_TORRETA) continue;
+
+            Alien *alvo = NULL;
+            Alien *a = j->aliens[l];
+            while (a != NULL) {
+                if (a->coluna > c) {
+                    if (alvo == NULL || a->coluna < alvo->coluna) {
+                        alvo = a;
+                    }
+                }
+                a = a->next;
+            }
+
+            if (alvo == NULL) continue;
+
+            for (int i = 0; i < MAX_PROJETEIS; i++) {
+                if (!projeteis[i].ativo) {
+                    projeteis[i].x_origem  = (float)(x_inicial + c * 64 + 32);
+                    projeteis[i].y_origem  = (float)(y_inicial + l * 64 + 32);
+                    projeteis[i].x_destino = (float)(x_inicial + alvo->coluna * 64 + 32);
+                    projeteis[i].y_destino = (float)(y_inicial + l * 64 + 32);
+                    projeteis[i].tempo_inicio = GetTime();
+                    projeteis[i].duracao   = 0.8f;
+                    projeteis[i].dano      = j->grid[l][c].defesa->dano;
+                    projeteis[i].linha     = l;
+                    projeteis[i].ativo     = 1;
+                    break;
+                }
+            }
+        }
+    }
+}
 
 int main() {
     Jogo j;

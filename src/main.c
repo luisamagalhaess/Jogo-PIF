@@ -169,15 +169,19 @@ int main() {
                                     tex = torreta;
                                     break;
                             }
-                            DrawTexturePro(
-                                tex,
-                                (Rectangle){0, 0, tex.width, tex.height},
-                                (Rectangle){x_inicial + c * 64, y_inicial + l * 64, 64, 64},
-                                (Vector2){0, 0},
-                                0,
-                                RAYWHITE
-                            );
-                        }
+                                int num_frames_defesa = 4;
+                                int frame_largura_defesa = tex.width / num_frames_defesa;
+                                int frame_atual_defesa = (int)(GetTime() * 6) % num_frames_defesa;
+
+                                DrawTexturePro(
+                                    tex,
+                                    (Rectangle){frame_atual_defesa * frame_largura_defesa, 0, frame_largura_defesa, tex.height},
+                                    (Rectangle){x_inicial + c * 64, y_inicial + l * 64, 64, 64},
+                                    (Vector2){0, 0},
+                                    0,
+                                    RAYWHITE
+                                );
+                                                    }
                     }
                 }
 

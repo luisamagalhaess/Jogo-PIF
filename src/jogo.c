@@ -51,21 +51,23 @@ void mover_aliens(Jogo *j) {
         Alien *a = j->aliens[l];
         while (a != NULL) {
             Alien *proximo = a->next;
-            if (a->coluna - 1 >= 0 && j->grid[l][a->coluna - 1].defesa != NULL) {
-                j->grid[l][a->coluna - 1].defesa->vida -= a->dano;
-                if (j->grid[l][a->coluna - 1].defesa->vida <= 0) {
-                    if (j->grid[l][a->coluna - 1].defesa->tipo == DEFESA_BOMBA) {
-                        explodir_bomba(j, l, a->coluna - 1);
+            a->coluna--;
+            if(j->grid[l][a->coluna].defesa != NULL){
+                j->grid[l][a->coluna].defesa->vida -= a->dano;
+                if(j->grid[l][a->coluna].defesa->vida <= 0){
+                    if(j->grid[l][a->coluna].defesa->tipo == DEFESA_BOMBA){ //verifica se a defesa é uma bomba
+                       explodir_bomba(j, l, a->coluna); //explode
                     }
-                    destruir_defesa(j->grid[l][a->coluna - 1].defesa);
-                    j->grid[l][a->coluna - 1].defesa = NULL;
+                    destruir_defesa(j->grid[l][a->coluna].defesa);
+                    j->grid[l][a->coluna].defesa = NULL;
                 }
-            } else {
-                a->coluna--;
-                if (a->coluna < 0) {
-                    j->vidas--;
-                    remover_alien(&j->aliens[l], a);
-                }
+                a->coluna++;
+                a = proximo;
+                continue;
+            }
+            if (a->coluna < 0) {
+                j->vidas--;
+                remover_alien(&j->aliens[l], a);
             }
             a = proximo;
         }

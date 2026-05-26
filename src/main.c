@@ -90,6 +90,7 @@ int main() {
                 torretas_atacam(&j);
                 mover_aliens(&j);
                 spawnar_alien(&j);
+                verificar_onda(&j);
                 ultimo_turno = GetTime();
             }
 

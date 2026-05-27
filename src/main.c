@@ -180,6 +180,47 @@ int main() {
 
             float progresso_turno = (GetTime() - ultimo_turno) / intervalo;
             if (progresso_turno > 1.0f) progresso_turno = 1.0f;
+            for (int i = 0; i < MAX_PROJETEIS; i++) {
+                // Destecção de colisão
+                if (!projeteis[i].ativo) continue;
+
+                float t = (float)((GetTime() - projeteis[i].tempo_inicio) / projeteis[i].duracao);
+
+                if (t >= 1.0f) {
+                    projeteis[i].ativo = 0;
+                    continue;
+                }
+
+                float px = projeteis[i].x_origem + (projeteis[i].x_destino - projeteis[i].x_origem) * t;
+                float py = projeteis[i].y_origem + (projeteis[i].y_destino - projeteis[i].y_origem) * t;
+
+                int linha = projeteis[i].linha;
+                Alien *a = j.aliens[linha];
+                while (a != NULL) {
+                    Alien *proximo = a->next;
+
+                    float coluna_visual = (a->coluna + 1) - progresso_turno;
+                    float ax = (float)(x_inicial + coluna_visual * 64 + 32);
+                    float ay = (float)(y_inicial + linha * 64 + 32);
+
+                    float dx = px - ax;
+                    float dy = py - ay;
+
+                    if (dx*dx + dy*dy < 20.0f * 20.0f) {
+                        a->vida -= projeteis[i].dano;
+                        a->tempo_hit = GetTime();
+                        projeteis[i].ativo = 0;
+
+                        if (a->vida <= 0) {
+                            j.score += 10;
+                            j.aliens_mortos++;
+                            remover_alien(&j.aliens[linha], a);
+                        }
+                        break;
+                    }
+                    a = proximo;
+                }
+            }
 
             BeginDrawing();
                 ClearBackground(BLACK);

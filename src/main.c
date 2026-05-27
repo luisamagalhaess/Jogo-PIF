@@ -248,10 +248,25 @@ int main() {
                         int frame_largura = tex.width / 4;
                         int frame_atual = (int)(GetTime() * 6) % 4;
 
+                        Color tint = RAYWHITE;
+                        float tempo_desde_hit = (float)(GetTime() - a->tempo_hit);
+                        float flash_duracao = 0.6f;
+
+                        if (a->tempo_hit > 0 && tempo_desde_hit < flash_duracao) {
+                            float intensidade = fabsf(sinf(tempo_desde_hit * 10.0f));
+                            intensidade *= (1.0f - tempo_desde_hit / flash_duracao);
+                            tint = (Color){
+                                255,
+                                (unsigned char)(255.0f * (1.0f - intensidade * 0.85f)),
+                                (unsigned char)(255.0f * (1.0f - intensidade * 0.85f)),
+                                255
+                            };
+                        }
+
                         DrawTexturePro(tex,
                             (Rectangle){frame_atual * frame_largura, 0, frame_largura, tex.height},
                             (Rectangle){x_inicial + coluna_visual * 64, y_inicial + l * 64, 64, 64},
-                            (Vector2){0, 0}, 0, RAYWHITE);
+                            (Vector2){0, 0}, 0, tint);
                         a = a->next;
                     }
                 }
@@ -274,6 +289,19 @@ int main() {
                                 (Vector2){0, 0}, 0, RAYWHITE);
                         }
                     }
+                }
+
+                for (int i = 0; i < MAX_PROJETEIS; i++) {
+                    if (!projeteis[i].ativo) continue;
+
+                    float t = (float)((GetTime() - projeteis[i].tempo_inicio) / projeteis[i].duracao);
+                    if (t >= 1.0f) continue;
+
+                    float px = projeteis[i].x_origem + (projeteis[i].x_destino - projeteis[i].x_origem) * t;
+                    float py = projeteis[i].y_origem + (projeteis[i].y_destino - projeteis[i].y_origem) * t;
+
+                    DrawCircle((int)px, (int)py, 9, Fade(YELLOW, 0.35f));
+                    DrawCircle((int)px, (int)py, 4, YELLOW);
                 }
 
                 DrawRectangle(40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));

@@ -33,6 +33,7 @@ int main() {
     Texture2D torreta = LoadTexture("assets/torreta.png");
     Texture2D bomba = LoadTexture("assets/bomba.png");
     Texture2D alien_invasor = LoadTexture("assets/alien_invasor.png");
+    Texture2D cartas = LoadTexture("assets/cartas.png");
 
 
     int defesa_selecionada = -1;
@@ -46,13 +47,13 @@ int main() {
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
                 //verificar se o clique aconteceu nas cartas:
                 if(mouse.y >= y_menu){
-                    if(mouse.x >= 40 && mouse.x <= 40 + 154){
+                    if(mouse.x >= 0 && mouse.x <= 200){
                         defesa_selecionada = DEFESA_GERADOR;
-                    }else if(mouse.x >= 230 && mouse.x <= 230 + 154){
+                    }else if(mouse.x >= 200 && mouse.x <= 400){
                         defesa_selecionada = DEFESA_TORRETA;
-                    }else if(mouse.x >= 420 && mouse.x <= 420 + 154){
+                    }else if(mouse.x >= 400 && mouse.x <= 600){
                         defesa_selecionada = DEFESA_MURO;
-                    }else if(mouse.x >= 610 && mouse.x <= 610 + 154){
+                    }else if(mouse.x >= 600 && mouse.x <= 800){
                         defesa_selecionada = DEFESA_BOMBA;
                     }
                 }else{
@@ -186,27 +187,9 @@ int main() {
                     }
                 }
 
-                // 3. DESENHAR O MENU INFERIOR
-
-                // CARTA 1: GERADOR
-                DrawRectangle(40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-                DrawText("Gerador", 40 + 10, y_menu + 10, 20, WHITE); 
-                DrawText("Custo: 10", 40 + 10, y_menu + 35, 16, WHITE);
-
-                // CARTA 2: TORRETA
-                DrawRectangle(40 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-                DrawText("Torreta", 40 + 150 + 40 + 10, y_menu + 10, 16, WHITE);
-                DrawText("Custo: 100", 40 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
-
-                // CARTA 3: MURO (Como estava antes x Como ficou)
-                DrawRectangle(230 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-                DrawText("Muro", 230 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
-                DrawText("Custo: 10", 230 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
-
-                // CARTA 4: BOMBA (Como estava antes x Como ficou)
-                DrawRectangle(420 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-                DrawText("Bomba", 420 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
-                DrawText("Custo: 100", 420 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
+                DrawTexturePro(cartas, (Rectangle){0, 0, cartas.width, cartas.height},
+                                (Rectangle){0, y_menu, 800, 100},
+                                (Vector2){0, 0}, 0, WHITE);
 
                 //exibir energia, vidas, score e ondas (x, y, tamanho, cor)
                 DrawText(TextFormat("Energia: %d", j.energia), 10, 15, 20, WHITE);
@@ -243,6 +226,7 @@ int main() {
 
     // 6. Liberar memória
     UnloadTexture(fundo);
+    UnloadTexture(cartas);
     UnloadTexture(alien_invasor);
     UnloadTexture(alien_blindado);
     UnloadTexture(alien_kamikaze);

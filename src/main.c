@@ -376,24 +376,6 @@ int main() {
                     DrawCircle((int)px, (int)py, 4, YELLOW);
                 }
 
-                DrawRectangle(40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-                DrawText("Gerador", 40 + 10, y_menu + 10, 20, WHITE);
-                DrawText("Custo: 10", 40 + 10, y_menu + 35, 16, WHITE);
-
-                DrawRectangle(230, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-                DrawText("Torreta", 230 + 10, y_menu + 10, 16, WHITE);
-                DrawText("Custo: 100", 230 + 10, y_menu + 35, 16, WHITE);
-
-                // CARTA 3: MURO
-                DrawRectangle(230 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-                DrawText("Muro", 230 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
-                DrawText("Custo: 10", 230 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
-
-                // CARTA 4: BOMBA
-                DrawRectangle(420 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-                DrawText("Bomba", 420 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
-                DrawText("Custo: 100", 420 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
-
                 DrawText(TextFormat("Energia: %d", j.energia), 10, 15, 20, WHITE);
                 DrawText(TextFormat("Vidas: %d", j.vidas), 200, 15, 20, WHITE);
                 DrawText(TextFormat("Score: %d", j.score), 400, 15, 20, WHITE);

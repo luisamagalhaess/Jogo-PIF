@@ -91,12 +91,15 @@ int main() {
     int slide_atual = 0;
     int char_atual = 0; //variável para contar qeuantos caracteres mostrar
     double ultimo_char = GetTime();
+    double tempo_inicio_slide = GetTime();
 
     int defesa_selecionada = -1;
     int y_menu = 500;
     int estado = 0; // 0=história, 1=título, 2=jogo, 3=game over
-
-    while (!WindowShouldClose()) {
+    Projetil projeteis[MAX_PROJETEIS] = {0};
+    
+    
+        while (!WindowShouldClose()) {
 
         // ESTADO 0: HISTÓRIA (slides)
         if (estado == 0) {
@@ -105,11 +108,24 @@ int main() {
             else if (slide_atual == 1) slide_tex = slide2;
             else slide_tex = slide3;
 
+            // calcula zoom — recalculado todo frame
+            float tempo_slide = (float)(GetTime() - tempo_inicio_slide);
+            float zoom = 1.0f - (tempo_slide * 0.02f);
+            if (zoom < 0.85f) zoom = 0.85f;
+            float largura_crop = slide_tex.width * zoom;
+            float altura_crop = slide_tex.height * zoom;
+            float x_crop = (slide_tex.width - largura_crop) / 2;
+            float y_crop = (slide_tex.height - altura_crop) / 2;
+
             BeginDrawing();
                 ClearBackground(BLACK);
-                DrawTexturePro(slide_tex, (Rectangle){0, 0, slide_tex.width, slide_tex.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
+                DrawTexturePro(slide_tex,
+                    (Rectangle){x_crop, y_crop, largura_crop, altura_crop},
+                    (Rectangle){0, 0, 800, 600},
+                    (Vector2){0, 0}, 0, WHITE);
                 DrawRectangle(0, 450, 800, 150, Fade(BLACK, 0.7f));
                 DrawText("Clique para continuar...", 300, 540, 16, GRAY);
+
                 if (GetTime() - ultimo_char >= 0.05) { //avança um caractere a cada 0.05 segundos
                     if (char_atual < (int)strlen(textos_slides[slide_atual])) {
                         char_atual++;
@@ -117,19 +133,17 @@ int main() {
                     ultimo_char = GetTime();
                 }
 
-                int largura_texto = MeasureText(textos_slides[slide_atual], 18); // calcula posição baseada no tamanho do texto, já que com o efeito máquina de escrever o texto mudade de tamanho a cada letra
+                int largura_texto = MeasureText(textos_slides[slide_atual], 18); // calcula posição baseada no tamanho do texto
                 int x_texto = (800 - largura_texto) / 2;
-                DrawText(TextSubtext(textos_slides[slide_atual], 0, char_atual), x_texto, 470, 18, WHITE);// desenha só os primeiros char_atual caracteres
+                DrawText(TextSubtext(textos_slides[slide_atual], 0, char_atual), x_texto, 470, 18, WHITE); // desenha só os primeiros char_atual caracteres
 
                 if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                     slide_atual++;
                     char_atual = 0;
                     ultimo_char = GetTime();
-                    
-                    if (slide_atual >= 3) {
-                        estado = 1; // passou todos os slides, vai para o título
-                    }
-                }   
+                    tempo_inicio_slide = GetTime(); // reseta o zoom para o novo slide
+                    if (slide_atual >= 3) estado = 1;
+                }
             EndDrawing();
 
         // ESTADO 1: TELA DE TÍTULO
@@ -206,8 +220,9 @@ int main() {
 
             float progresso_turno = (GetTime() - ultimo_turno) / intervalo;
             if (progresso_turno > 1.0f) progresso_turno = 1.0f;
+
             for (int i = 0; i < MAX_PROJETEIS; i++) {
-                // Destecção de colisão
+                // Detecção de colisão
                 if (!projeteis[i].ativo) continue;
 
                 float t = (float)((GetTime() - projeteis[i].tempo_inicio) / projeteis[i].duracao);
@@ -389,6 +404,7 @@ int main() {
                     ultimo_turno = GetTime();
                     defesa_selecionada = -1;
                     slide_atual = 0;
+                    tempo_inicio_slide = GetTime();
                     estado = 0; // volta para a história
                 }
             EndDrawing();

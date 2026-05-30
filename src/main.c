@@ -167,7 +167,7 @@ int main() {
                 DrawText("Defesa do Planeta", 230, 270, 25, LIGHTGRAY);
 
                 DrawRectangleRounded((Rectangle){280, y_botao, 240, 60}, 0.3f, 8, Fade(DARKGRAY, 0.8f));
-                DrawRectangleRoundedLines((Rectangle){280, y_botao, 240, 60}, 0.3f, 8, 2, cor_borda);
+                DrawRectangleRoundedLines((Rectangle){280, y_botao, 240, 60}, 0.3f, 8, cor_borda);
                 DrawText("Iniciar Batalha", 305, y_botao + 18, 22, WHITE);
 
                 if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {

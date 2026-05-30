@@ -2,6 +2,9 @@
 #include "jogo.h"
 
 void iniciar_jogo(Jogo* j){
+    j->aliens_mortos = 0;
+    j->aliens_para_proxima_onda = 10;
+
     for (int l = 0; l < LINHAS; l++){
         for(int c = 0; c < COLUNAS; c++){
             j->grid[l][c].defesa = NULL;
@@ -51,21 +54,23 @@ void mover_aliens(Jogo *j) {
         Alien *a = j->aliens[l];
         while (a != NULL) {
             Alien *proximo = a->next;
-            if (a->coluna - 1 >= 0 && j->grid[l][a->coluna - 1].defesa != NULL) {
-                j->grid[l][a->coluna - 1].defesa->vida -= a->dano;
-                if (j->grid[l][a->coluna - 1].defesa->vida <= 0) {
-                    if (j->grid[l][a->coluna - 1].defesa->tipo == DEFESA_BOMBA) {
-                        explodir_bomba(j, l, a->coluna - 1);
+            a->coluna--;
+            if(j->grid[l][a->coluna].defesa != NULL){
+                j->grid[l][a->coluna].defesa->vida -= a->dano;
+                if(j->grid[l][a->coluna].defesa->vida <= 0){
+                    if(j->grid[l][a->coluna].defesa->tipo == DEFESA_BOMBA){ //verifica se a defesa é uma bomba
+                       explodir_bomba(j, l, a->coluna); //explode
                     }
-                    destruir_defesa(j->grid[l][a->coluna - 1].defesa);
-                    j->grid[l][a->coluna - 1].defesa = NULL;
+                    destruir_defesa(j->grid[l][a->coluna].defesa);
+                    j->grid[l][a->coluna].defesa = NULL;
                 }
-            } else {
-                a->coluna--;
-                if (a->coluna < 0) {
-                    j->vidas--;
-                    remover_alien(&j->aliens[l], a);
-                }
+                a->coluna++;
+                a = proximo;
+                continue;
+            }
+            if (a->coluna < 0) {
+                j->vidas--;
+                remover_alien(&j->aliens[l], a);
             }
             a = proximo;
         }
@@ -74,8 +79,15 @@ void mover_aliens(Jogo *j) {
 
 
 void spawnar_alien(Jogo *j) {
+    int tipo;
+    if(j->onda_atual == 1){
+        tipo = 0;
+    }else if(j->onda_atual == 2){
+        tipo = rand() % 2;
+    }else{
+        tipo = rand() % 3;
+    }
     int linha = rand() % LINHAS; //cria um alien novo numa linha aleatória
-    int tipo = rand() % 3;
     
     Alien *novo = criar_alien(tipo, linha);
     if (novo == NULL) return;
@@ -106,6 +118,7 @@ void torretas_atacam(Jogo *j){
                         
                         if (alvo->vida <= 0) {
                             j->score += 10;
+                            j->aliens_mortos++;
                             remover_alien(&j->aliens[l], alvo);
                         }
                     }
@@ -128,6 +141,7 @@ void explodir_bomba(Jogo *j, int linha, int coluna){
                         if(a->vida <= 0){
                             remover_alien(&j->aliens[l], a);
                             j->score += 10;
+                            j->aliens_mortos++;
                         }
                     }
                     a = proximo;
@@ -142,5 +156,13 @@ void explodir_bomba(Jogo *j, int linha, int coluna){
             }
 
         }
+    }
+}
+
+void verificar_onda(Jogo *j){
+    if(j->aliens_mortos >= j->aliens_para_proxima_onda){
+        j->onda_atual++;
+        j->aliens_mortos = 0;
+        j->aliens_para_proxima_onda *= 2;
     }
 }

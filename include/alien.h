@@ -10,6 +10,7 @@ typedef struct Alien{
     int dano;
     int linha;
     int coluna;
+    double tempo_hit;
     struct Alien *next;
 } Alien;
 

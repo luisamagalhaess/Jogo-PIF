@@ -77,6 +77,7 @@ void mover_aliens(Jogo *j) {
     }
 }
 
+
 void spawnar_alien(Jogo *j) {
     int tipo;
     if(j->onda_atual == 1){

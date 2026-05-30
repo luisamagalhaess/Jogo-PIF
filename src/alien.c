@@ -9,6 +9,7 @@ Alien *criar_alien(int tipo, int linha){
     a->tipo = tipo;
     a->linha = linha;
     a->coluna = 8;
+    a->tempo_hit = -999.0;
     a->next = NULL;
 
     switch (tipo){
@@ -36,10 +37,10 @@ void remover_alien(Alien **head, Alien *alien){
     Alien *anterior = NULL;
     while (atual != NULL){
         if(atual == alien){
-            if(anterior == NULL){ //se o alien que irá ser removido for o head, o head vira o próximo nó
+            if(anterior == NULL){
                 *head = atual->next; 
             }else{
-                anterior->next = atual->next; // o alien atual vai receber o next
+                anterior->next = atual->next;
             }
             free(atual);
             return;

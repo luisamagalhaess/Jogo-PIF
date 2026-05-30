@@ -82,6 +82,7 @@ int main() {
     Texture2D slide1 = LoadTexture("assets/slide1.png");
     Texture2D slide2 = LoadTexture("assets/slide2.png");
     Texture2D slide3 = LoadTexture("assets/slide3.png");
+    Texture2D titulo = LoadTexture("assets/titulo.png");
 
     const char *textos_slides[3] = {
         "Os aliens descobriram o planeta Erid e cobiçaram seus recursos...",
@@ -148,19 +149,28 @@ int main() {
 
         // ESTADO 1: TELA DE TÍTULO
         } else if (estado == 1) {
+            Vector2 m = GetMousePosition();
+            int y_botao = 360;
+            Color cor_borda = WHITE;
+
+            // efeito de saltar ao passar o mouse
+            if (m.x >= 280 && m.x <= 520 && m.y >= 360 && m.y <= 420) {
+                y_botao = 352;
+                cor_borda = YELLOW;
+            }
+
             BeginDrawing();
                 ClearBackground(BLACK);
-                DrawTexturePro(fundo, (Rectangle){0, 0, fundo.width, fundo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
+                DrawTexturePro(titulo, (Rectangle){0, 0, titulo.width, titulo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
                 DrawText("ERID", 280, 180, 80, WHITE);
                 DrawText("Defesa do Planeta", 230, 270, 25, LIGHTGRAY);
 
-                // Botão iniciar
-                DrawRectangle(280, 360, 240, 60, Fade(DARKGRAY, 0.8f));
-                DrawText("Iniciar Batalha", 305, 378, 22, WHITE);
+                DrawRectangleRounded((Rectangle){280, y_botao, 240, 60}, 0.3f, 8, Fade(DARKGRAY, 0.8f));
+                DrawRectangleRoundedLines((Rectangle){280, y_botao, 240, 60}, 0.3f, 8, 2, cor_borda);
+                DrawText("Iniciar Batalha", 305, y_botao + 18, 22, WHITE);
 
                 if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                    Vector2 m = GetMousePosition();
-                    if (m.x >= 280 && m.x <= 520 && m.y >= 360 && m.y <= 420) {
+                    if (m.x >= 280 && m.x <= 520 && m.y >= y_botao && m.y <= y_botao + 60) {
                         estado = 2;
                         ultimo_turno = GetTime();
                     }
@@ -429,6 +439,7 @@ int main() {
     UnloadTexture(slide1);
     UnloadTexture(slide2);
     UnloadTexture(slide3);
+    UnloadTexture(titulo);
     CloseWindow();
     destruir_jogo(&j);
     return 0;

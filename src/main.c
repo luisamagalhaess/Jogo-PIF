@@ -68,7 +68,7 @@ int main() {
     carregar_scores(scores, &scores_salvos);
 
     int x_inicial = (800 - 9 * 64) / 2;
-    int y_inicial = 160;
+    int y_inicial = 160; // Distância do topo da janela até o início do tabuleiro
     double ultimo_turno = GetTime();
     double intervalo = 3.0;
     Texture2D fundo = LoadTexture("assets/fundo.png");
@@ -79,32 +79,60 @@ int main() {
     Texture2D torreta = LoadTexture("assets/torreta.png");
     Texture2D bomba = LoadTexture("assets/bomba.png");
     Texture2D alien_invasor = LoadTexture("assets/alien_invasor.png");
+    Texture2D slide1 = LoadTexture("assets/slide1.png");
+    Texture2D slide2 = LoadTexture("assets/slide2.png");
+    Texture2D slide3 = LoadTexture("assets/slide3.png");
+
+    const char *textos_slides[3] = {
+        "Os aliens descobriram o planeta Erid e cobiçaram seus recursos...",
+        "Sem aviso, iniciaram um bombardeio devastador contra o planeta...",
+        "As defesas de Erid foram destruidas. Apenas voce ainda resiste..."
+    };
+    int slide_atual = 0;
+    int char_atual = 0; //variável para contar qeuantos caracteres mostrar
+    double ultimo_char = GetTime();
 
     int defesa_selecionada = -1;
     int y_menu = 500;
     int estado = 0; // 0=história, 1=título, 2=jogo, 3=game over
-    Projetil projeteis[MAX_PROJETEIS] = {0};
-
 
     while (!WindowShouldClose()) {
 
-        // ESTADO 0: HISTÓRIA
+        // ESTADO 0: HISTÓRIA (slides)
         if (estado == 0) {
+            Texture2D slide_tex;
+            if (slide_atual == 0) slide_tex = slide1;
+            else if (slide_atual == 1) slide_tex = slide2;
+            else slide_tex = slide3;
+
             BeginDrawing();
                 ClearBackground(BLACK);
-                DrawTexturePro(fundo, (Rectangle){0, 0, fundo.width, fundo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, Fade(WHITE, 0.3f));
-                DrawText("O planeta Erid estava em paz...", 100, 150, 20, WHITE);
-                DrawText("Ate que sinais desconhecidos", 100, 190, 20, WHITE);
-                DrawText("comecaram a surgir no espaco.", 100, 230, 20, WHITE);
-                DrawText("Forcas alienígenas se aproximam.", 100, 270, 20, WHITE);
-                DrawText("Voce e o ultimo defensor de Erid.", 100, 310, 20, WHITE);
-                DrawText("Clique para continuar...", 250, 400, 18, GRAY);
-                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                    estado = 1;
+                DrawTexturePro(slide_tex, (Rectangle){0, 0, slide_tex.width, slide_tex.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
+                DrawRectangle(0, 450, 800, 150, Fade(BLACK, 0.7f));
+                DrawText("Clique para continuar...", 300, 540, 16, GRAY);
+                if (GetTime() - ultimo_char >= 0.05) { //avança um caractere a cada 0.05 segundos
+                    if (char_atual < (int)strlen(textos_slides[slide_atual])) {
+                        char_atual++;
+                    }
+                    ultimo_char = GetTime();
                 }
+
+                int largura_texto = MeasureText(textos_slides[slide_atual], 18); // calcula posição baseada no tamanho do texto, já que com o efeito máquina de escrever o texto mudade de tamanho a cada letra
+                int x_texto = (800 - largura_texto) / 2;
+                DrawText(TextSubtext(textos_slides[slide_atual], 0, char_atual), x_texto, 470, 18, WHITE);// desenha só os primeiros char_atual caracteres
+
+                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                    slide_atual++;
+                    char_atual = 0;
+                    ultimo_char = GetTime();
+                    
+                    if (slide_atual >= 3) {
+                        estado = 1; // passou todos os slides, vai para o título
+                    }
+                }   
             EndDrawing();
 
-        // ESTADO 1: TÍTULO
+        // ESTADO 1: TELA DE TÍTULO
         } else if (estado == 1) {
             BeginDrawing();
                 ClearBackground(BLACK);
@@ -127,9 +155,7 @@ int main() {
 
         // ESTADO 2: JOGO
         } else if (estado == 2) {
-            if (j.vidas <= 0) {
-                estado = 3;
-            }
+            if (j.vidas <= 0) estado = 3; // sem vidas, vai para game over
 
             Vector2 mouse = GetMousePosition();
             int col_mouse = (mouse.x - x_inicial) / 64;
@@ -228,10 +254,20 @@ int main() {
 
                 for (int l = 0; l < LINHAS; l++) {
                     for (int c = 0; c < COLUNAS; c++) {
-                        Color cor = BLANK;
-                        if (l == lin_mouse && c == col_mouse) cor = Fade(WHITE, 0.2f);
-                        if (l == j.cursor_linha && c == j.cursor_coluna) cor = Fade(YELLOW, 0.4f);
-                        if (cor.a > 0) DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, cor);
+                        Color cor = BLANK; // Transparente por padrão!
+
+                        if (l == lin_mouse && c == col_mouse) {
+                            cor = Fade(WHITE, 0.2f); // Branco transparente
+                        }
+                        if (l == j.cursor_linha && c == j.cursor_coluna){
+                            cor = Fade(YELLOW, 0.4f); // Amarelo transparente
+                        }
+
+                        if (cor.a > 0) { // Só desenha o fundo se tiver cor
+                            DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, cor);
+                        }
+
+                        // Bordas do grid bem suaves para não atrapalhar a arte
                         DrawRectangleLines(x_inicial + c * 64, y_inicial + l * 64, 64, 64, Fade(WHITE, 0.15f));
                     }
                 }
@@ -271,6 +307,7 @@ int main() {
                     }
                 }
 
+                // Desenha defesa
                 for(int l = 0; l < LINHAS; l++){
                     for(int c = 0; c < COLUNAS; c++){
                         if(j.grid[l][c].defesa != NULL){
@@ -281,12 +318,18 @@ int main() {
                                 case DEFESA_MURO:    tex = muro;    break;
                                 case DEFESA_TORRETA: tex = torreta; break;
                             }
-                            int frame_largura_defesa = tex.width / 4;
-                            int frame_atual_defesa = (int)(GetTime() * 6) % 4;
-                            DrawTexturePro(tex,
+                            int num_frames_defesa = 4;
+                            int frame_largura_defesa = tex.width / num_frames_defesa;
+                            int frame_atual_defesa = (int)(GetTime() * 6) % num_frames_defesa;
+
+                            DrawTexturePro(
+                                tex,
                                 (Rectangle){frame_atual_defesa * frame_largura_defesa, 0, frame_largura_defesa, tex.height},
                                 (Rectangle){x_inicial + c * 64, y_inicial + l * 64, 64, 64},
-                                (Vector2){0, 0}, 0, RAYWHITE);
+                                (Vector2){0, 0},
+                                0,
+                                RAYWHITE
+                            );
                         }
                     }
                 }
@@ -312,13 +355,15 @@ int main() {
                 DrawText("Torreta", 230 + 10, y_menu + 10, 16, WHITE);
                 DrawText("Custo: 100", 230 + 10, y_menu + 35, 16, WHITE);
 
-                DrawRectangle(420, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-                DrawText("Muro", 420 + 10, y_menu + 10, 20, WHITE);
-                DrawText("Custo: 10", 420 + 10, y_menu + 35, 16, WHITE);
+                // CARTA 3: MURO
+                DrawRectangle(230 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
+                DrawText("Muro", 230 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
+                DrawText("Custo: 10", 230 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
 
-                DrawRectangle(610, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
-                DrawText("Bomba", 610 + 10, y_menu + 10, 20, WHITE);
-                DrawText("Custo: 100", 610 + 10, y_menu + 35, 16, WHITE);
+                // CARTA 4: BOMBA
+                DrawRectangle(420 + 150 + 40, y_menu, 154, 90, Fade(DARKGRAY, 0.8f));
+                DrawText("Bomba", 420 + 150 + 40 + 10, y_menu + 10, 20, WHITE);
+                DrawText("Custo: 100", 420 + 150 + 40 + 10, y_menu + 35, 16, WHITE);
 
                 DrawText(TextFormat("Energia: %d", j.energia), 10, 15, 20, WHITE);
                 DrawText(TextFormat("Vidas: %d", j.vidas), 200, 15, 20, WHITE);
@@ -343,12 +388,14 @@ int main() {
                     }
                     ultimo_turno = GetTime();
                     defesa_selecionada = -1;
-                    estado = 0;
+                    slide_atual = 0;
+                    estado = 0; // volta para a história
                 }
             EndDrawing();
         }
     }
 
+    // 5. Game over
     Score novo_score;
     strcpy(novo_score.nome, nome);
     novo_score.vidas = j.vidas;
@@ -363,6 +410,9 @@ int main() {
     UnloadTexture(muro);
     UnloadTexture(torreta);
     UnloadTexture(bomba);
+    UnloadTexture(slide1);
+    UnloadTexture(slide2);
+    UnloadTexture(slide3);
     CloseWindow();
     destruir_jogo(&j);
     return 0;

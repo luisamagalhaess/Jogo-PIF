@@ -374,6 +374,16 @@ int main() {
                                 (Rectangle){150, y_menu, 500, altura_cartas},
                                 (Vector2){0, 0}, 0, WHITE);
 
+                if(defesa_selecionada == DEFESA_GERADOR){
+                    DrawRectangle(150, y_menu, 125, altura_cartas, Fade(YELLOW, 0.3f));
+                }else if(defesa_selecionada == DEFESA_TORRETA){
+                    DrawRectangle(275, y_menu, 125, altura_cartas, Fade(YELLOW, 0.3f));
+                }else if(defesa_selecionada == DEFESA_MURO){
+                    DrawRectangle(400, y_menu, 125, altura_cartas, Fade(YELLOW, 0.3f));
+                }else if(defesa_selecionada == DEFESA_BOMBA){
+                    DrawRectangle(525, y_menu, 125, altura_cartas, Fade(YELLOW, 0.3f));
+                }
+
                 for (int i = 0; i < MAX_PROJETEIS; i++) {
                     if (!projeteis[i].ativo) continue;
 

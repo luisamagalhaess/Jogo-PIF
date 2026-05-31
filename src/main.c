@@ -180,6 +180,7 @@ int main() {
         // ESTADO 2: JOGO
         } else if (estado == 2) {
             if (j.vidas <= 0) estado = 3; // sem vidas, vai para game over
+            else if (j.onda_atual > TOTAL_ONDAS && !aliens_presentes(&j)) estado = 4;
 
             Vector2 mouse = GetMousePosition();
             int col_mouse = (mouse.x - x_inicial) / 64;
@@ -391,6 +392,27 @@ int main() {
                 ClearBackground(BLACK);
                 DrawTexturePro(fundo, (Rectangle){0, 0, fundo.width, fundo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
                 DrawText("GAME OVER", 250, 200, 60, WHITE);
+                DrawText(TextFormat("Score: %d", j.score), 300, 290, 30, WHITE);
+                DrawText("Clique para jogar novamente", 230, 370, 20, WHITE);
+
+                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                    destruir_jogo(&j);
+                    iniciar_jogo(&j);
+                    for (int i = 0; i < MAX_PROJETEIS; i++) {
+                        projeteis[i].ativo = 0;
+                    }
+                    ultimo_turno = GetTime();
+                    defesa_selecionada = -1;
+                    slide_atual = 0;
+                    tempo_inicio_slide = GetTime();
+                    estado = 0; // volta para a história
+                }
+            EndDrawing();
+        } else if (estado == 4){
+            BeginDrawing();
+                ClearBackground(BLACK);
+                DrawTexturePro(fundo, (Rectangle){0, 0, fundo.width, fundo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
+                DrawText("VITÓRIA!", 250, 200, 60, WHITE);
                 DrawText(TextFormat("Score: %d", j.score), 300, 290, 30, WHITE);
                 DrawText("Clique para jogar novamente", 230, 370, 20, WHITE);
 

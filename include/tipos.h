@@ -1,5 +1,7 @@
 #ifndef TIPOS_H
 #define TIPOS_H
+
+#define TOTAL_ONDAS 5
  
 //Dimensões do grid
 #define LINHAS  5

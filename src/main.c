@@ -68,7 +68,7 @@ int main() {
     carregar_scores(scores, &scores_salvos);
 
     int x_inicial = (800 - 9 * 64) / 2;
-    int y_inicial = 160; // Distância do topo da janela até o início do tabuleiro
+    int y_inicial = 140; // Distância do topo da janela até o início do tabuleiro
     double ultimo_turno = GetTime();
     double intervalo = 3.0;
     Texture2D fundo = LoadTexture("assets/fundo.png");
@@ -82,9 +82,7 @@ int main() {
     Texture2D cartas = LoadTexture("assets/cartas.png");
     Texture2D slide1 = LoadTexture("assets/slide1.png");
     Texture2D slide2 = LoadTexture("assets/slide2.png");
-    Texture2D slide3 = LoadTexture("assets/slide3.png");
-    Texture2D titulo = LoadTexture("assets/titulo.png");
-
+    Texture2D slide3 = LoadTexture("assets/slide3.png");    
     const char *textos_slides[3] = {
         "Os aliens descobriram o planeta Erid e cobiçaram seus recursos...",
         "Sem aviso, iniciaram um bombardeio devastador contra o planeta...",
@@ -94,9 +92,10 @@ int main() {
     int char_atual = 0; //variável para contar qeuantos caracteres mostrar
     double ultimo_char = GetTime();
     double tempo_inicio_slide = GetTime();
-
+    
     int defesa_selecionada = -1;
-    int y_menu = 500;
+    int y_menu = 465;
+    int altura_cartas = 600 - y_menu;
     int estado = 0; // 0=história, 1=título, 2=jogo, 3=game over
     Projetil projeteis[MAX_PROJETEIS] = {0};
     
@@ -162,7 +161,7 @@ int main() {
 
             BeginDrawing();
                 ClearBackground(BLACK);
-                DrawTexturePro(titulo, (Rectangle){0, 0, titulo.width, titulo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
+                DrawTexturePro(fundo, (Rectangle){0, 0, fundo.width, fundo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
                 DrawText("ERID", 280, 180, 80, WHITE);
                 DrawText("Defesa do Planeta", 230, 270, 25, LIGHTGRAY);
 
@@ -188,13 +187,13 @@ int main() {
 
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
                 if(mouse.y >= y_menu){
-                    if(mouse.x >= 0 && mouse.x <= 200){
+                    if(mouse.x >= 150 && mouse.x <= 275){
                         defesa_selecionada = DEFESA_GERADOR;
-                    }else if(mouse.x >= 200 && mouse.x <= 400){
+                    }else if(mouse.x >= 275 && mouse.x <= 400){
                         defesa_selecionada = DEFESA_TORRETA;
-                    }else if(mouse.x >= 400 && mouse.x <= 600){
+                    }else if(mouse.x >= 400 && mouse.x <= 525){
                         defesa_selecionada = DEFESA_MURO;
-                    }else if(mouse.x >= 600 && mouse.x <= 800){
+                    }else if(mouse.x >= 525 && mouse.x <= 650){
                         defesa_selecionada = DEFESA_BOMBA;
                     }
                 }else{
@@ -293,7 +292,10 @@ int main() {
                             DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, cor);
                         }
 
-                        // Bordas do grid bem suaves para não atrapalhar a arte
+                        // Escurece as células
+                        DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, Fade(BLACK, 0.4f));
+
+                        // Bordas do grid
                         DrawRectangleLines(x_inicial + c * 64, y_inicial + l * 64, 64, 64, Fade(WHITE, 0.15f));
                     }
                 }
@@ -361,8 +363,9 @@ int main() {
                 }
 
                 DrawTexturePro(cartas, (Rectangle){0, 0, cartas.width, cartas.height},
-                                (Rectangle){0, y_menu, 800, 100},
+                                (Rectangle){150, y_menu, 500, altura_cartas},
                                 (Vector2){0, 0}, 0, WHITE);
+
                 for (int i = 0; i < MAX_PROJETEIS; i++) {
                     if (!projeteis[i].ativo) continue;
 
@@ -426,7 +429,6 @@ int main() {
     UnloadTexture(slide1);
     UnloadTexture(slide2);
     UnloadTexture(slide3);
-    UnloadTexture(titulo);
     CloseWindow();
     destruir_jogo(&j);
     return 0;

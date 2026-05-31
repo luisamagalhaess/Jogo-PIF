@@ -164,7 +164,7 @@ void verificar_onda(Jogo *j){
     if(j->aliens_mortos >= j->aliens_para_proxima_onda){
         j->onda_atual++;
         j->aliens_mortos = 0;
-        j->aliens_para_proxima_onda *= 2;
+        j->aliens_para_proxima_onda += 5;
     }
 }
 

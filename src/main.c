@@ -72,7 +72,7 @@ int main() {
     int x_inicial = (800 - 9 * 64) / 2;
     int y_inicial = 140; // Distância do topo da janela até o início do tabuleiro
     double ultimo_turno = GetTime();
-    double intervalo = 3.0;
+    double intervalo = 4.5;
     Texture2D fundo = LoadTexture("assets/fundo.png");
     Texture2D alien_blindado = LoadTexture("assets/alien_blindado.png");
     Texture2D alien_kamikaze = LoadTexture("assets/alien_kamikaze.png");

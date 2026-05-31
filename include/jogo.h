@@ -30,5 +30,6 @@ void geradores_produzem(Jogo *j);
 void spawnar_alien(Jogo *j);
 void explodir_bomba(Jogo *j, int linha, int coluna);
 void verificar_onda(Jogo *j);
+int aliens_presentes(Jogo *j);
 
 #endif

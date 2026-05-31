@@ -79,6 +79,7 @@ void mover_aliens(Jogo *j) {
 
 
 void spawnar_alien(Jogo *j) {
+    if(j->onda_atual > TOTAL_ONDAS) return;
     int tipo;
     if(j->onda_atual == 1){
         tipo = 0;
@@ -165,4 +166,13 @@ void verificar_onda(Jogo *j){
         j->aliens_mortos = 0;
         j->aliens_para_proxima_onda *= 2;
     }
+}
+
+int aliens_presentes(Jogo *j){
+    for(int i = 0; i < LINHAS; i++){
+        if(j->aliens[i] != NULL){
+            return 1;
+        }
+    }
+    return 0;
 }

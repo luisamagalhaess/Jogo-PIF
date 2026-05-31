@@ -82,7 +82,6 @@ int main() {
     Texture2D slide1 = LoadTexture("assets/slide1.png");
     Texture2D slide2 = LoadTexture("assets/slide2.png");
     Texture2D slide3 = LoadTexture("assets/slide3.png");
-    Texture2D titulo = LoadTexture("assets/titulo.png");
 
     const char *textos_slides[3] = {
         "Os aliens descobriram o planeta Erid e cobiçaram seus recursos...",
@@ -161,12 +160,12 @@ int main() {
 
             BeginDrawing();
                 ClearBackground(BLACK);
-                DrawTexturePro(titulo, (Rectangle){0, 0, titulo.width, titulo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
+                DrawTexturePro(fundo, (Rectangle){0, 0, fundo.width, fundo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
                 DrawText("ERID", 280, 180, 80, WHITE);
                 DrawText("Defesa do Planeta", 230, 270, 25, LIGHTGRAY);
 
                 DrawRectangleRounded((Rectangle){280, y_botao, 240, 60}, 0.3f, 8, Fade(DARKGRAY, 0.8f));
-                DrawRectangleRoundedLines((Rectangle){280, y_botao, 240, 60}, 0.3f, 8, 2, cor_borda);
+                DrawRectangleRoundedLines((Rectangle){280, y_botao, 240, 60}, 0.3f, 8, cor_borda);
                 DrawText("Iniciar Batalha", 305, y_botao + 18, 22, WHITE);
 
                 if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -292,7 +291,10 @@ int main() {
                             DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, cor);
                         }
 
-                        // Bordas do grid bem suaves para não atrapalhar a arte
+                        // Escurece as células
+                        DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, Fade(BLACK, 0.4f));
+
+                        // Bordas do grid
                         DrawRectangleLines(x_inicial + c * 64, y_inicial + l * 64, 64, 64, Fade(WHITE, 0.15f));
                     }
                 }
@@ -439,7 +441,6 @@ int main() {
     UnloadTexture(slide1);
     UnloadTexture(slide2);
     UnloadTexture(slide3);
-    UnloadTexture(titulo);
     CloseWindow();
     destruir_jogo(&j);
     return 0;

@@ -102,7 +102,7 @@ int main() {
     int defesa_selecionada = -1;
     int y_menu = 465;
     int altura_cartas = 600 - y_menu;
-    int estado = 0; // 0=história, 1=título, 2=jogo, 3=game over
+    int estado = 0; // 0=história, 1=título, 2=jogo, 3=game over, 4=vitória, 5=como jogar
     Projetil projeteis[MAX_PROJETEIS] = {0};
     
     
@@ -166,6 +166,14 @@ int main() {
                 cor_borda = YELLOW;
             }
 
+            // efeito de saltar para o botão Como Jogar
+            Color cor_borda_cj = WHITE;
+            int y_botao_cj = 450;
+            if (m.x >= 280 && m.x <= 520 && m.y >= 450 && m.y <= 510) {
+                y_botao_cj = 442;
+                cor_borda_cj = YELLOW;
+            }
+
             BeginDrawing();
                 ClearBackground(BLACK);
                 DrawTexturePro(fundo, (Rectangle){0, 0, fundo.width, fundo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
@@ -176,10 +184,17 @@ int main() {
                 DrawRectangleRoundedLines((Rectangle){280, y_botao, 240, 60}, 0.3f, 8, cor_borda);
                 DrawText("Iniciar Batalha", 305, y_botao + 18, 22, WHITE);
 
+                DrawRectangleRounded((Rectangle){280, y_botao_cj, 240, 60}, 0.3f, 8, Fade(DARKGRAY, 0.8f));
+                DrawRectangleRoundedLines((Rectangle){280, y_botao_cj, 240, 60}, 0.3f, 8, cor_borda_cj);
+                DrawText("Como Jogar", 315, y_botao_cj + 18, 22, WHITE);
+
                 if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                     if (m.x >= 280 && m.x <= 520 && m.y >= y_botao && m.y <= y_botao + 60) {
                         estado = 2;
                         ultimo_turno = GetTime();
+                    }
+                    if (m.x >= 280 && m.x <= 520 && m.y >= y_botao_cj && m.y <= y_botao_cj + 60) {
+                        estado = 5;
                     }
                 }
             EndDrawing();
@@ -444,6 +459,52 @@ int main() {
                     slide_atual = 0;
                     tempo_inicio_slide = GetTime();
                     estado = 0; // volta para a história
+                }
+            EndDrawing();
+
+        // ESTADO 5: COMO JOGAR
+        } else if (estado == 5) {
+            BeginDrawing();
+                ClearBackground(BLACK);
+                DrawTexturePro(fundo, (Rectangle){0, 0, fundo.width, fundo.height}, (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, Fade(WHITE, 0.4f));
+
+                DrawText("COMO JOGAR", 270, 20, 30, WHITE);
+
+                // DEFESAS
+                DrawText("DEFESAS:", 40, 70, 20, YELLOW);
+                DrawText("Gerador  - Custo: 100 | Gera 25 de energia por turno", 40, 100, 16, WHITE);
+                DrawText("Torreta  - Custo: 200 | Ataca o alien mais proximo a cada 2 turnos", 40, 125, 16, WHITE);
+                DrawText("Muro     - Custo: 100 | Bloqueia e absorve dano (vida: 300)", 40, 150, 16, WHITE);
+                DrawText("Bomba    - Custo: 300 | Explode em area ao ser atingida (dano: 200)", 40, 175, 16, WHITE);
+
+                // ALIENS
+                DrawText("ALIENS:", 40, 220, 20, YELLOW);
+                DrawText("Invasor  - Vida: 100 | Dano: 10  | Alien padrao", 40, 250, 16, WHITE);
+                DrawText("Blindado - Vida: 500 | Dano: 20  | Alta resistencia", 40, 275, 16, WHITE);
+                DrawText("Kamikaze - Vida: 50  | Dano: 100 | Rapido e altamente destrutivo", 40, 300, 16, WHITE);
+
+                // CONTROLES
+                DrawText("CONTROLES:", 40, 345, 20, YELLOW);
+                DrawText("Clique nas cartas para selecionar uma defesa", 40, 375, 16, WHITE);
+                DrawText("Clique numa celula do grid para posicionar a defesa", 40, 400, 16, WHITE);
+                DrawText("Se um alien chegar ao lado esquerdo do grid, voce perde uma vida", 40, 425, 16, WHITE);
+
+                // Botão voltar
+                Vector2 mv = GetMousePosition();
+                Color cor_voltar = WHITE;
+                int y_voltar = 500;
+                if (mv.x >= 280 && mv.x <= 520 && mv.y >= 500 && mv.y <= 560) {
+                    y_voltar = 492;
+                    cor_voltar = YELLOW;
+                }
+                DrawRectangleRounded((Rectangle){280, y_voltar, 240, 60}, 0.3f, 8, Fade(DARKGRAY, 0.8f));
+                DrawRectangleRoundedLines((Rectangle){280, y_voltar, 240, 60}, 0.3f, 8, cor_voltar);
+                DrawText("Voltar", 370, y_voltar + 18, 22, WHITE);
+
+                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                    if (mv.x >= 280 && mv.x <= 520 && mv.y >= y_voltar && mv.y <= y_voltar + 60) {
+                        estado = 1;
+                    }
                 }
             EndDrawing();
         }

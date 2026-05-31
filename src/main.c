@@ -63,6 +63,8 @@ int main() {
     char nome[50];
 
     InitWindow(800, 600, "Erid");
+    SetTargetFPS(60);//Isso garante que o loop rode a 60 frames por segundo e o UpdateMusicStream seja chamado regularmente
+    InitAudioDevice();
     iniciar_jogo(&j);
     srand(time(NULL));
     carregar_scores(scores, &scores_salvos);
@@ -82,7 +84,11 @@ int main() {
     Texture2D cartas = LoadTexture("assets/cartas.png");
     Texture2D slide1 = LoadTexture("assets/slide1.png");
     Texture2D slide2 = LoadTexture("assets/slide2.png");
-    Texture2D slide3 = LoadTexture("assets/slide3.png");    
+    Texture2D slide3 = LoadTexture("assets/slide3.png");
+    Music musica = LoadMusicStream("assets/musica.mp3");
+    PlayMusicStream(musica);
+    SetMusicVolume(musica, 1.0f);
+    
     const char *textos_slides[3] = {
         "Os aliens descobriram o planeta Erid e cobiçaram seus recursos...",
         "Sem aviso, iniciaram um bombardeio devastador contra o planeta...",
@@ -101,6 +107,7 @@ int main() {
     
     
         while (!WindowShouldClose()) {
+            UpdateMusicStream(musica);
 
         // ESTADO 0: HISTÓRIA (slides)
         if (estado == 0) {
@@ -451,6 +458,8 @@ int main() {
     UnloadTexture(slide1);
     UnloadTexture(slide2);
     UnloadTexture(slide3);
+    UnloadMusicStream(musica);
+    CloseAudioDevice();
     CloseWindow();
     destruir_jogo(&j);
     return 0;

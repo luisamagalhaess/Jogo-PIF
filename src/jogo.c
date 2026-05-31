@@ -14,7 +14,7 @@ void iniciar_jogo(Jogo* j){
         j->aliens[l] = NULL;
     }
 
-    j->energia = 50;
+    j->energia = 300;
     j->vidas = 5;
     j->score = 0;
     j->onda_atual = 1;

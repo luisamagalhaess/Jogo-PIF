@@ -201,10 +201,10 @@ int main() {
                     j.cursor_coluna = col_mouse;
                     if (defesa_selecionada != -1){
                         int custo = 0;
-                        if(defesa_selecionada == DEFESA_GERADOR) custo = 10;
-                        else if(defesa_selecionada == DEFESA_TORRETA) custo = 100;
-                        else if(defesa_selecionada == DEFESA_MURO) custo = 10;
-                        else if(defesa_selecionada == DEFESA_BOMBA) custo = 100;
+                        if(defesa_selecionada == DEFESA_GERADOR) custo = 100;
+                        else if(defesa_selecionada == DEFESA_TORRETA) custo = 200;
+                        else if(defesa_selecionada == DEFESA_MURO) custo = 100;
+                        else if(defesa_selecionada == DEFESA_BOMBA) custo = 300;
 
                         if(j.energia >= custo){
                             if(j.grid[j.cursor_linha][j.cursor_coluna].defesa != NULL){

@@ -79,6 +79,7 @@ int main() {
     Texture2D torreta = LoadTexture("assets/torreta.png");
     Texture2D bomba = LoadTexture("assets/bomba.png");
     Texture2D alien_invasor = LoadTexture("assets/alien_invasor.png");
+    Texture2D cartas = LoadTexture("assets/cartas.png");
     Texture2D slide1 = LoadTexture("assets/slide1.png");
     Texture2D slide2 = LoadTexture("assets/slide2.png");
     Texture2D slide3 = LoadTexture("assets/slide3.png");
@@ -186,13 +187,13 @@ int main() {
 
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
                 if(mouse.y >= y_menu){
-                    if(mouse.x >= 40 && mouse.x <= 40 + 154){
+                    if(mouse.x >= 0 && mouse.x <= 200){
                         defesa_selecionada = DEFESA_GERADOR;
-                    }else if(mouse.x >= 230 && mouse.x <= 230 + 154){
+                    }else if(mouse.x >= 200 && mouse.x <= 400){
                         defesa_selecionada = DEFESA_TORRETA;
-                    }else if(mouse.x >= 420 && mouse.x <= 420 + 154){
+                    }else if(mouse.x >= 400 && mouse.x <= 600){
                         defesa_selecionada = DEFESA_MURO;
-                    }else if(mouse.x >= 610 && mouse.x <= 610 + 154){
+                    }else if(mouse.x >= 600 && mouse.x <= 800){
                         defesa_selecionada = DEFESA_BOMBA;
                     }
                 }else{
@@ -361,6 +362,9 @@ int main() {
                     }
                 }
 
+                DrawTexturePro(cartas, (Rectangle){0, 0, cartas.width, cartas.height},
+                                (Rectangle){0, y_menu, 800, 100},
+                                (Vector2){0, 0}, 0, WHITE);
                 for (int i = 0; i < MAX_PROJETEIS; i++) {
                     if (!projeteis[i].ativo) continue;
 
@@ -431,6 +435,7 @@ int main() {
     exibir_scores(scores, scores_salvos);
 
     UnloadTexture(fundo);
+    UnloadTexture(cartas);
     UnloadTexture(alien_invasor);
     UnloadTexture(alien_blindado);
     UnloadTexture(alien_kamikaze);

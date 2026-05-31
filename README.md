@@ -1,7 +1,7 @@
 ## Sobre o Jogo
 
 ### Nome
-*(a definir)*
+Erid
 
 ### Integrantes do grupo
 - Luísa Feitosa Magalhães
@@ -24,7 +24,7 @@ O jogo se passa no planeta **Erid**, um mundo altamente tecnológico que está s
 ### Recursos do jogador
 | Recurso | Valor inicial | Descrição |
 |---|---|---|
-| Energia | 50 | Usada para construir defesas |
+| Energia | 300 | Usada para construir defesas |
 | Vidas | 5 | Resistência da base; zera = derrota |
 | Score | 0 | Aumenta ao eliminar aliens |
 | Onda | 1 | Dificuldade cresce a cada onda |
@@ -35,10 +35,10 @@ O jogo se passa no planeta **Erid**, um mundo altamente tecnológico que está s
 
 | Defesa | Vida | Custo | Dano | Cadência | Especial |
 |---|---|---|---|---|---|
-| Gerador | 100 | 10 | — | — | +25 energia/turno |
-| Torreta | 100 | 100 | 10 | a cada 2 turnos | Ataca o alien mais próximo à frente |
-| Muro | 300 | 10 | — | — | Bloqueia e absorve dano |
-| Bomba | 1 | 100 | 200 | — | Explode em área (raio 1) ao ser atingida |
+| Gerador | 100 | 100 | — | — | +25 energia/turno |
+| Torreta | 100 | 200 | 10 | a cada 2 turnos | Ataca o alien mais próximo à frente |
+| Muro | 300 | 100 | — | — | Bloqueia e absorve dano |
+| Bomba | 1 | 300 | 200 | — | Explode em área (raio 1) ao ser atingida |
 
 ---
 
@@ -77,18 +77,6 @@ tipos.h     — constantes e macros globais (dimensões, tipos de alien/defesa)
 alien.h/c   — estrutura Alien, criação, remoção e destruição da lista encadeada
 defesa.h/c  — estrutura Defesa, criação e liberação de memória
 jogo.h/c    — estado global (grid, aliens por linha, energia, vidas, score, cursor)
+scores.h/c — sistema de pontuação
+main.c — loop principal, renderização com Raylib, estados do jogo
 ```
-
-### Estado atual de implementação
-- [x] Estruturas de dados (Alien, Defesa, Celula, Jogo)
-- [x] Criação de aliens com atributos por tipo
-- [x] Lista encadeada de aliens por linha com inserção e remoção
-- [x] Criação de defesas com atributos por tipo
-- [x] Inicialização e destruição segura do estado do jogo
-- [x] Loop principal de turnos
-- [x] Movimentação dos aliens
-- [x] Combate (torreta × alien, alien × defesa)
-- [ ] Spawn de ondas
-- [ ] Explosão em área da bomba
-- [x] Renderização do grid no terminal
-- [x] Input do jogador (posicionamento com cursor)

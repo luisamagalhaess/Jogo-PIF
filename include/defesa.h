@@ -8,9 +8,9 @@ typedef struct Defesa{
     int vida;
     int custo;
     int dano;
-    int cadencia; //a cada quantos turnos ataca
-    int energia_por_turno; //gerador
-    int raio_explosao; //bomba
+    int cadencia;
+    int energia_por_turno;
+    int raio_explosao;
 }Defesa;
 
 Defesa *criar_defesa(int tipo);

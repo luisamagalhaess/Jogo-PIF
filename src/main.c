@@ -63,14 +63,13 @@ int main() {
     char nome[50];
 
     InitWindow(800, 600, "Erid");
-    SetTargetFPS(60);//Isso garante que o loop rode a 60 frames por segundo e o UpdateMusicStream seja chamado regularmente
-    InitAudioDevice();
+    SetTargetFPS(60);
     iniciar_jogo(&j);
     srand(time(NULL));
     carregar_scores(scores, &scores_salvos);
 
     int x_inicial = (800 - 9 * 64) / 2;
-    int y_inicial = 140; // Distância do topo da janela até o início do tabuleiro
+    int y_inicial = 140;
     double ultimo_turno = GetTime();
     double intervalo = 4.5;
     Texture2D fundo = LoadTexture("assets/fundo.png");
@@ -85,38 +84,31 @@ int main() {
     Texture2D slide1 = LoadTexture("assets/slide1.png");
     Texture2D slide2 = LoadTexture("assets/slide2.png");
     Texture2D slide3 = LoadTexture("assets/slide3.png");
-    Music musica = LoadMusicStream("assets/musica.mp3");
-    PlayMusicStream(musica);
-    SetMusicVolume(musica, 1.0f);
-    
+
     const char *textos_slides[3] = {
         "Os aliens descobriram o planeta Erid e cobiçaram seus recursos...",
         "Sem aviso, iniciaram um bombardeio devastador contra o planeta...",
         "As defesas de Erid foram destruidas. Apenas voce ainda resiste..."
     };
     int slide_atual = 0;
-    int char_atual = 0; //variável para contar qeuantos caracteres mostrar
+    int char_atual = 0;
     double ultimo_char = GetTime();
     double tempo_inicio_slide = GetTime();
     
     int defesa_selecionada = -1;
     int y_menu = 465;
     int altura_cartas = 600 - y_menu;
-    int estado = 0; // 0=história, 1=título, 2=jogo, 3=game over, 4=vitória, 5=como jogar
+    int estado = 0;
     Projetil projeteis[MAX_PROJETEIS] = {0};
     
-    
-        while (!WindowShouldClose()) {
-            UpdateMusicStream(musica);
+    while (!WindowShouldClose()) {
 
-        // ESTADO 0: HISTÓRIA (slides)
         if (estado == 0) {
             Texture2D slide_tex;
             if (slide_atual == 0) slide_tex = slide1;
             else if (slide_atual == 1) slide_tex = slide2;
             else slide_tex = slide3;
 
-            // calcula zoom — recalculado todo frame
             float tempo_slide = (float)(GetTime() - tempo_inicio_slide);
             float zoom = 1.0f - (tempo_slide * 0.02f);
             if (zoom < 0.85f) zoom = 0.85f;
@@ -134,39 +126,36 @@ int main() {
                 DrawRectangle(0, 450, 800, 150, Fade(BLACK, 0.7f));
                 DrawText("Clique para continuar...", 300, 540, 16, GRAY);
 
-                if (GetTime() - ultimo_char >= 0.05) { //avança um caractere a cada 0.05 segundos
+                if (GetTime() - ultimo_char >= 0.05) {
                     if (char_atual < (int)strlen(textos_slides[slide_atual])) {
                         char_atual++;
                     }
                     ultimo_char = GetTime();
                 }
 
-                int largura_texto = MeasureText(textos_slides[slide_atual], 18); // calcula posição baseada no tamanho do texto
+                int largura_texto = MeasureText(textos_slides[slide_atual], 18);
                 int x_texto = (800 - largura_texto) / 2;
-                DrawText(TextSubtext(textos_slides[slide_atual], 0, char_atual), x_texto, 470, 18, WHITE); // desenha só os primeiros char_atual caracteres
+                DrawText(TextSubtext(textos_slides[slide_atual], 0, char_atual), x_texto, 470, 18, WHITE);
 
                 if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                     slide_atual++;
                     char_atual = 0;
                     ultimo_char = GetTime();
-                    tempo_inicio_slide = GetTime(); // reseta o zoom para o novo slide
+                    tempo_inicio_slide = GetTime();
                     if (slide_atual >= 3) estado = 1;
                 }
             EndDrawing();
 
-        // ESTADO 1: TELA DE TÍTULO
         } else if (estado == 1) {
             Vector2 m = GetMousePosition();
             int y_botao = 360;
             Color cor_borda = WHITE;
 
-            // efeito de saltar ao passar o mouse
             if (m.x >= 280 && m.x <= 520 && m.y >= 360 && m.y <= 420) {
                 y_botao = 352;
                 cor_borda = YELLOW;
             }
 
-            // efeito de saltar para o botão Como Jogar
             Color cor_borda_cj = WHITE;
             int y_botao_cj = 450;
             if (m.x >= 280 && m.x <= 520 && m.y >= 450 && m.y <= 510) {
@@ -199,9 +188,8 @@ int main() {
                 }
             EndDrawing();
 
-        // ESTADO 2: JOGO
         } else if (estado == 2) {
-            if (j.vidas <= 0) estado = 3; // sem vidas, vai para game over
+            if (j.vidas <= 0) estado = 3;
             else if (j.onda_atual > TOTAL_ONDAS && !aliens_presentes(&j)) estado = 4;
 
             Vector2 mouse = GetMousePosition();
@@ -255,7 +243,6 @@ int main() {
             if (progresso_turno > 1.0f) progresso_turno = 1.0f;
 
             for (int i = 0; i < MAX_PROJETEIS; i++) {
-                // Detecção de colisão
                 if (!projeteis[i].ativo) continue;
 
                 float t = (float)((GetTime() - projeteis[i].tempo_inicio) / projeteis[i].duracao);
@@ -302,23 +289,20 @@ int main() {
 
                 for (int l = 0; l < LINHAS; l++) {
                     for (int c = 0; c < COLUNAS; c++) {
-                        Color cor = BLANK; // Transparente por padrão!
+                        Color cor = BLANK;
 
                         if (l == lin_mouse && c == col_mouse) {
-                            cor = Fade(WHITE, 0.2f); // Branco transparente
+                            cor = Fade(WHITE, 0.2f);
                         }
                         if (l == j.cursor_linha && c == j.cursor_coluna){
-                            cor = Fade(YELLOW, 0.4f); // Amarelo transparente
+                            cor = Fade(YELLOW, 0.4f);
                         }
 
-                        if (cor.a > 0) { // Só desenha o fundo se tiver cor
+                        if (cor.a > 0) {
                             DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, cor);
                         }
 
-                        // Escurece as células
                         DrawRectangle(x_inicial + c * 64, y_inicial + l * 64, 64, 64, Fade(BLACK, 0.4f));
-
-                        // Bordas do grid
                         DrawRectangleLines(x_inicial + c * 64, y_inicial + l * 64, 64, 64, Fade(WHITE, 0.15f));
                     }
                 }
@@ -358,7 +342,6 @@ int main() {
                     }
                 }
 
-                // Desenha defesa
                 for(int l = 0; l < LINHAS; l++){
                     for(int c = 0; c < COLUNAS; c++){
                         if(j.grid[l][c].defesa != NULL){
@@ -377,9 +360,7 @@ int main() {
                                 tex,
                                 (Rectangle){frame_atual_defesa * frame_largura_defesa, 0, frame_largura_defesa, tex.height},
                                 (Rectangle){x_inicial + c * 64, y_inicial + l * 64, 64, 64},
-                                (Vector2){0, 0},
-                                0,
-                                RAYWHITE
+                                (Vector2){0, 0}, 0, RAYWHITE
                             );
                         }
                     }
@@ -418,7 +399,6 @@ int main() {
                 DrawText(TextFormat("Onda atual: %d", j.onda_atual), 600, 15, 20, WHITE);
             EndDrawing();
 
-        // ESTADO 3: GAME OVER
         } else if (estado == 3) {
             BeginDrawing();
                 ClearBackground(BLACK);
@@ -437,9 +417,10 @@ int main() {
                     defesa_selecionada = -1;
                     slide_atual = 0;
                     tempo_inicio_slide = GetTime();
-                    estado = 0; // volta para a história
+                    estado = 0;
                 }
             EndDrawing();
+
         } else if (estado == 4){
             BeginDrawing();
                 ClearBackground(BLACK);
@@ -458,11 +439,10 @@ int main() {
                     defesa_selecionada = -1;
                     slide_atual = 0;
                     tempo_inicio_slide = GetTime();
-                    estado = 0; // volta para a história
+                    estado = 0;
                 }
             EndDrawing();
 
-        // ESTADO 5: COMO JOGAR
         } else if (estado == 5) {
             BeginDrawing();
                 ClearBackground(BLACK);
@@ -470,26 +450,22 @@ int main() {
 
                 DrawText("COMO JOGAR", 270, 20, 30, WHITE);
 
-                // DEFESAS
                 DrawText("DEFESAS:", 40, 70, 20, YELLOW);
                 DrawText("Gerador  - Custo: 100 | Gera 25 de energia por turno", 40, 100, 16, WHITE);
                 DrawText("Torreta  - Custo: 200 | Ataca o alien mais proximo a cada 2 turnos", 40, 125, 16, WHITE);
                 DrawText("Muro     - Custo: 100 | Bloqueia e absorve dano (vida: 300)", 40, 150, 16, WHITE);
                 DrawText("Bomba    - Custo: 300 | Explode em area ao ser atingida (dano: 200)", 40, 175, 16, WHITE);
 
-                // ALIENS
                 DrawText("ALIENS:", 40, 220, 20, YELLOW);
                 DrawText("Invasor  - Vida: 100 | Dano: 10  | Alien padrao", 40, 250, 16, WHITE);
                 DrawText("Blindado - Vida: 500 | Dano: 20  | Alta resistencia", 40, 275, 16, WHITE);
                 DrawText("Kamikaze - Vida: 50  | Dano: 100 | Rapido e altamente destrutivo", 40, 300, 16, WHITE);
 
-                // CONTROLES
                 DrawText("CONTROLES:", 40, 345, 20, YELLOW);
                 DrawText("Clique nas cartas para selecionar uma defesa", 40, 375, 16, WHITE);
                 DrawText("Clique numa celula do grid para posicionar a defesa", 40, 400, 16, WHITE);
                 DrawText("Se um alien chegar ao lado esquerdo do grid, voce perde uma vida", 40, 425, 16, WHITE);
 
-                // Botão voltar
                 Vector2 mv = GetMousePosition();
                 Color cor_voltar = WHITE;
                 int y_voltar = 500;
@@ -510,7 +486,6 @@ int main() {
         }
     }
 
-    // 5. Game over
     Score novo_score;
     strcpy(novo_score.nome, nome);
     novo_score.vidas = j.vidas;
@@ -529,8 +504,6 @@ int main() {
     UnloadTexture(slide1);
     UnloadTexture(slide2);
     UnloadTexture(slide3);
-    UnloadMusicStream(musica);
-    CloseAudioDevice();
     CloseWindow();
     destruir_jogo(&j);
     return 0;

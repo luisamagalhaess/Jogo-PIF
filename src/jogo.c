@@ -22,7 +22,7 @@ void iniciar_jogo(Jogo* j){
     j->cursor_coluna = -1;
 }
 
-void destruir_jogo(Jogo* j){ //liberar a memória alocada
+void destruir_jogo(Jogo* j){
     for(int l = 0; l < LINHAS; l++){
         for(int c = 0; c < COLUNAS; c++){
             if(j->grid[l][c].defesa != NULL){
@@ -58,8 +58,8 @@ void mover_aliens(Jogo *j) {
             if(j->grid[l][a->coluna].defesa != NULL){
                 j->grid[l][a->coluna].defesa->vida -= a->dano;
                 if(j->grid[l][a->coluna].defesa->vida <= 0){
-                    if(j->grid[l][a->coluna].defesa->tipo == DEFESA_BOMBA){ //verifica se a defesa é uma bomba
-                       explodir_bomba(j, l, a->coluna); //explode
+                    if(j->grid[l][a->coluna].defesa->tipo == DEFESA_BOMBA){
+                       explodir_bomba(j, l, a->coluna);
                     }
                     destruir_defesa(j->grid[l][a->coluna].defesa);
                     j->grid[l][a->coluna].defesa = NULL;
@@ -88,26 +88,26 @@ void spawnar_alien(Jogo *j) {
     }else{
         tipo = rand() % 3;
     }
-    int linha = rand() % LINHAS; //cria um alien novo numa linha aleatória
+    int linha = rand() % LINHAS;
     
     Alien *novo = criar_alien(tipo, linha);
     if (novo == NULL) return;
 
-    novo->next = j->aliens[linha]; // o next do novo aponta para o primeiro da lista
-    j->aliens[linha] = novo;       // o novo vira o primeiro da lista
+    novo->next = j->aliens[linha];
+    j->aliens[linha] = novo;
 }
 
 void torretas_atacam(Jogo *j){
     for (int l = 0; l < LINHAS; l++){
         for(int c = 0; c < COLUNAS; c++){
             if(j->grid[l][c].defesa != NULL){
-                if(j->grid[l][c].defesa->tipo == DEFESA_TORRETA){ //percorre o grid procurando torretas
+                if(j->grid[l][c].defesa->tipo == DEFESA_TORRETA){
 
                     Alien *alvo = NULL;
                     Alien *a = j->aliens[l];
 
                     while (a != NULL) {
-                        if (a->coluna > c) { // alien está à direita da torreta
+                        if (a->coluna > c) {
                             if (alvo == NULL || a->coluna < alvo->coluna) { 
                                 alvo = a;
                             }
@@ -131,9 +131,9 @@ void torretas_atacam(Jogo *j){
 }
 
 void explodir_bomba(Jogo *j, int linha, int coluna){
-    for (int l = linha -1; l <= linha +1;  l++){ // começa com -1 para pegar a linha de cima, passa pela linha da bomba e termina na linha de baixo(+1)
+    for (int l = linha -1; l <= linha +1;  l++){
         for (int c = coluna - 1; c <= coluna + 1; c++){
-            if (l >= 0 && l<LINHAS && c >= 0 && c < COLUNAS){//verifica se está dentro do grid, evita l e c serem negativos
+            if (l >= 0 && l<LINHAS && c >= 0 && c < COLUNAS){
                 Alien *a = j->aliens[l];
                 while (a != NULL){
                     Alien *proximo = a->next;

@@ -170,11 +170,13 @@ int main() {
                 DrawText("Defesa do Planeta", 230, 270, 25, LIGHTGRAY);
 
                 DrawRectangleRounded((Rectangle){280, y_botao, 240, 60}, 0.3f, 8, Fade(DARKGRAY, 0.8f));
-                DrawRectangleRoundedLines((Rectangle){280, y_botao, 240, 60}, 0.3f, 8, cor_borda);
+                Rectangle r1 = {280, y_botao, 240, 60};
+                ROUNDED_LINES(r1, 0.3f, 8, cor_borda);
                 DrawText("Iniciar Batalha", 305, y_botao + 18, 22, WHITE);
 
                 DrawRectangleRounded((Rectangle){280, y_botao_cj, 240, 60}, 0.3f, 8, Fade(DARKGRAY, 0.8f));
-                DrawRectangleRoundedLines((Rectangle){280, y_botao_cj, 240, 60}, 0.3f, 8, cor_borda_cj);
+                Rectangle r2 = {280, y_botao_cj, 240, 60};
+                ROUNDED_LINES(r2, 0.3f, 8, cor_borda_cj);
                 DrawText("Como Jogar", 315, y_botao_cj + 18, 22, WHITE);
 
                 if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -474,7 +476,8 @@ int main() {
                     cor_voltar = YELLOW;
                 }
                 DrawRectangleRounded((Rectangle){280, y_voltar, 240, 60}, 0.3f, 8, Fade(DARKGRAY, 0.8f));
-                DrawRectangleRoundedLines((Rectangle){280, y_voltar, 240, 60}, 0.3f, 8, cor_voltar);
+                Rectangle r3 = {280, y_voltar, 240, 60};
+                ROUNDED_LINES(r3, 0.3f, 8, cor_voltar);
                 DrawText("Voltar", 370, y_voltar + 18, 22, WHITE);
 
                 if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {

@@ -13,6 +13,12 @@ O jogo se passa no planeta **Erid**, um mundo altamente tecnológico que está s
 
 ---
 
+## Vídeo de Gameplay
+
+[Assista ao jogo sendo jogado](https://youtu.be/CLnR32ux47Q)
+
+---
+
 ## Sistema de Batalha
 
 ### Campo de batalha
@@ -77,6 +83,6 @@ tipos.h     — constantes e macros globais (dimensões, tipos de alien/defesa)
 alien.h/c   — estrutura Alien, criação, remoção e destruição da lista encadeada
 defesa.h/c  — estrutura Defesa, criação e liberação de memória
 jogo.h/c    — estado global (grid, aliens por linha, energia, vidas, score, cursor)
-scores.h/c — sistema de pontuação
-main.c — loop principal, renderização com Raylib, estados do jogo
+scores.h/c  — sistema de pontuação
+main.c      — loop principal, renderização com Raylib, estados do jogo
 ```
